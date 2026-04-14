@@ -1,0 +1,19 @@
+{% extends "templates/base.html" %}
+
+{% block title %}Prastar AI Workspace{% endblock %}
+
+{% block head %}{% endblock %}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div id="prastar-ai-workspace"></div>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ bundled_asset('sales_workspace.bundle.css') }}">
+{% endblock %}
+
+{% block script %}
+<script type="module" src="{{ bundled_asset('sales_workspace.bundle.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,195 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-11 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "opportunity",
+  "customer",
+  "currency",
+  "status",
+  "quotation",
+  "total_amount",
+  "target_margin_pct",
+  "column_break_5",
+  "ai_summary",
+  "project_area",
+  "scope_text",
+  "section_break_notes",
+  "assumptions",
+  "exclusions",
+  "generation_audit",
+  "drawing_takeoff_json",
+  "commercial_review_json",
+  "section_break_8",
+  "version_history",
+  "items"
+ ],
+ "fields": [
+  {
+   "fieldname": "opportunity",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Opportunity",
+   "options": "Opportunity"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer / Lead"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nProcessing\nCompleted\nApproved\nQuotation Generated"
+  },
+  {
+   "fieldname": "quotation",
+   "fieldtype": "Link",
+   "label": "Quotation",
+   "options": "Quotation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "target_margin_pct",
+   "fieldtype": "Percent",
+   "label": "Target Margin %",
+   "default": "18"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ai_summary",
+   "fieldtype": "Small Text",
+   "label": "AI Scope Summary"
+  },
+  {
+   "fieldname": "scope_text",
+   "fieldtype": "Small Text",
+   "label": "Raw Project Requirements"
+  },
+  {
+   "fieldname": "project_area",
+   "fieldtype": "Float",
+   "label": "Project Area (Sqft)"
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break",
+   "label": "Scope Notes"
+  },
+  {
+   "fieldname": "assumptions",
+   "fieldtype": "Text",
+   "label": "AI Assumptions"
+  },
+  {
+   "fieldname": "exclusions",
+   "fieldtype": "Text",
+   "label": "AI Exclusions"
+  },
+  {
+   "fieldname": "generation_audit",
+   "fieldtype": "Long Text",
+   "label": "Generation Audit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "drawing_takeoff_json",
+   "fieldtype": "Long Text",
+   "label": "Drawing Takeoff JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "commercial_review_json",
+   "fieldtype": "Long Text",
+   "label": "Commercial Review JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "version_history",
+   "fieldtype": "Table",
+   "label": "Version History",
+   "options": "AI Estimation Version",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Estimation Items",
+   "options": "AI Estimation Item"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-04-11 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "prastar_ai",
+ "name": "AI Estimation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 0,
+   "role": "Sales User",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="shineGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="108" fill="url(#bgGrad)"/>
+
+  <!-- Subtle top shine -->
+  <rect width="512" height="256" rx="108" fill="url(#shineGrad)"/>
+
+  <!-- Grid lines (fit-out / blueprint feel) -->
+  <line x1="0"   y1="170" x2="512" y2="170" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
+  <line x1="0"   y1="340" x2="512" y2="340" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
+  <line x1="170" y1="0"   x2="170" y2="512" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
+  <line x1="342" y1="0"   x2="342" y2="512" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"/>
+
+  <!-- AI spark (top-right) -->
+  <circle cx="396" cy="116" r="44" fill="rgba(255,255,255,0.13)" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+  <!-- four-point star -->
+  <polygon points="396,90 402,110 422,116 402,122 396,142 390,122 370,116 390,110"
+    fill="white" opacity="0.9"/>
+
+  <!-- Main "PA" wordmark -->
+  <text
+    x="256" y="330"
+    font-family="Arial Black,Arial,Helvetica,sans-serif"
+    font-size="188"
+    font-weight="900"
+    text-anchor="middle"
+    fill="white"
+    letter-spacing="-6"
+    opacity="0.97"
+  >PA</text>
+
+  <!-- Bottom label -->
+  <text
+    x="256" y="394"
+    font-family="Arial,Helvetica,sans-serif"
+    font-size="38"
+    font-weight="400"
+    text-anchor="middle"
+    fill="rgba(255,255,255,0.55)"
+    letter-spacing="6"
+  >PRASTAR</text>
+</svg>
