@@ -23,7 +23,7 @@ required_apps = ["erpnext"]
 add_to_apps_screen = [
 	{
 		"name": "prastara_ai",
-		"title": "Prastar AI",
+		"title": "Prastara AI",
 		"logo": "/assets/prastara_ai/images/logo.svg",
 		"route": "/sales-workspace",
 	}
