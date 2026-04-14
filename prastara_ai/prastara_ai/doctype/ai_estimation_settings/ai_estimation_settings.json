@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-04-11 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "openai_api_key",
+  "model_name",
+  "default_prompt"
+ ],
+ "fields": [
+  {
+   "fieldname": "openai_api_key",
+   "fieldtype": "Password",
+   "label": "OpenAI API Key"
+  },
+  {
+   "default": "gpt-4o",
+   "fieldname": "model_name",
+   "fieldtype": "Select",
+   "label": "Model Name",
+   "options": "gpt-4o\ngpt-4-turbo"
+  },
+  {
+   "fieldname": "default_prompt",
+   "fieldtype": "Small Text",
+   "label": "Default Prompt Template"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-04-11 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "prastara_ai",
+ "name": "AI Estimation Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

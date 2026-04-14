@@ -1,0 +1,121 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-04-14 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "template_name",
+  "template_code",
+  "is_active",
+  "default_margin_pct",
+  "category",
+  "room_zone",
+  "notes",
+  "scope_text_snapshot",
+  "items_json"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Template Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "template_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Template Code",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "default_margin_pct",
+   "fieldtype": "Percent",
+   "label": "Default Margin %"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Data",
+   "label": "Category"
+  },
+  {
+   "fieldname": "room_zone",
+   "fieldtype": "Data",
+   "label": "Room / Zone"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "scope_text_snapshot",
+   "fieldtype": "Long Text",
+   "label": "Scope Text Snapshot",
+   "read_only": 1
+  },
+  {
+   "fieldname": "items_json",
+   "fieldtype": "Long Text",
+   "label": "Items JSON",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-04-14 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "prastara_ai",
+ "name": "AI Cost Template",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 1,
+   "read": 1,
+   "report": 0,
+   "role": "Sales User",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
