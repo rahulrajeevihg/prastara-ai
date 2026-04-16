@@ -1,28 +1,24 @@
 <template>
 	<div class="pw-root">
 
-		<!-- Ambient mesh background -->
-		<div class="bg-mesh" aria-hidden="true">
-			<div class="bg-orb orb-a"></div>
-			<div class="bg-orb orb-b"></div>
-			<div class="bg-orb orb-c"></div>
-		</div>
-
 		<!-- ── Top Navigation ─────────────────────────── -->
 		<nav class="pw-nav">
 			<div class="nav-brand">
-				<div class="nav-logo">PA</div>
+				<div class="nav-logo">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+				</div>
 				<div>
-					<p class="nav-name">Prastar AI</p>
-					<p class="nav-sub">Sales Estimation Platform</p>
+					<p class="nav-name">Prastara AI</p>
+					<p class="nav-sub">Sales Estimation</p>
 				</div>
 			</div>
 			<div class="nav-actions">
-				<button class="btn btn-glass btn-sm" type="button" @click="toggleTheme">
-					{{ theme === 'light' ? '☾ Dark' : '☀ Light' }}
+				<a class="btn btn-ghost btn-sm" href="/app" title="Go to ERPNext Desk">← ERPNext</a>
+				<button class="btn btn-ghost btn-sm" type="button" @click="toggleTheme">
+					{{ theme === 'light' ? 'Dark' : 'Light' }}
 				</button>
-				<button class="btn btn-glass" type="button" @click="openOpportunityList">All Opportunities</button>
-				<button class="btn btn-primary" type="button" @click="createNewOpportunity">+ New Opportunity</button>
+				<button class="btn btn-glass btn-sm" type="button" @click="openOpportunityList">All Opportunities</button>
+				<button class="btn btn-primary btn-sm" type="button" @click="createNewOpportunity">+ New</button>
 			</div>
 		</nav>
 
@@ -271,7 +267,7 @@ function toggleTheme() {
 }
 
 onMounted(() => {
-	const savedTheme = window.localStorage.getItem("prastar-ai-sales-workspace-theme");
+	const savedTheme = window.localStorage.getItem("prastara-ai-sales-workspace-theme");
 	applyTheme(savedTheme || "light");
 	parseHash();
 	refreshData();
@@ -283,6 +279,6 @@ onUnmounted(() => {
 });
 
 watch(theme, (nextTheme) => {
-	window.localStorage.setItem("prastar-ai-sales-workspace-theme", nextTheme);
+	window.localStorage.setItem("prastara-ai-sales-workspace-theme", nextTheme);
 });
 </script>

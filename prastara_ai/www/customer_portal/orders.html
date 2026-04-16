@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders</title>
+  <link rel="stylesheet" href="/assets/prastara_ai/css/customer_portal.css">
+</head>
+<body class="cp-body cp-portal-body">
+
+{% include "prastara_ai/www/customer_portal/_header.html" %}
+
+<main class="cp-main">
+  <div class="cp-page-header">
+    <h1 class="cp-page-title">All Orders</h1>
+  </div>
+
+  {% if orders %}
+  <div class="cp-table-wrap">
+    <table class="cp-table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Date</th>
+          <th>Delivery Date</th>
+          <th class="cp-text-right">Amount</th>
+          <th>Billed</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td class="cp-mono">{{ o.name }}</td>
+          <td>{{ o.transaction_date }}</td>
+          <td>{{ o.delivery_date or "—" }}</td>
+          <td class="cp-text-right">{{ o.currency }} {{ "{:,.2f}".format(o.grand_total or 0) }}</td>
+          <td>
+            <div class="cp-mini-progress">
+              <div class="cp-mini-fill" style="width: {{ o.per_billed or 0 }}%"></div>
+            </div>
+            <span class="cp-text-muted" style="font-size:0.75rem">{{ "{:.0f}".format(o.per_billed or 0) }}%</span>
+          </td>
+          <td><span class="cp-badge cp-badge-{{ o.status | lower | replace(' ', '-') }}">{{ o.status }}</span></td>
+          <td><a href="/customer_portal/order?name={{ o.name }}" class="cp-link">View →</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="cp-empty-state">
+    <p>No orders found for your account.</p>
+  </div>
+  {% endif %}
+</main>
+
+{% include "prastara_ai/www/customer_portal/_logout_script.html" %}
+</body>
+</html>

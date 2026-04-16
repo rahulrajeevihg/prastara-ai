@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Portal — {{ customer_name }}</title>
+  <link rel="stylesheet" href="/assets/prastara_ai/css/customer_portal.css">
+</head>
+<body class="cp-body cp-portal-body">
+
+<header class="cp-header">
+  <div class="cp-header-inner">
+    <a href="/customer_portal/dashboard" class="cp-brand">
+      <img src="/assets/prastara_ai/images/logo.svg" alt="Logo" class="cp-header-logo">
+    </a>
+    <nav class="cp-nav">
+      <a href="/customer_portal/dashboard" class="cp-nav-link cp-nav-active">Dashboard</a>
+      <a href="/customer_portal/quotations" class="cp-nav-link">Quotations</a>
+      <a href="/customer_portal/orders" class="cp-nav-link">Orders</a>
+      <a href="/customer_portal/invoices" class="cp-nav-link">Invoices</a>
+    </nav>
+    <div class="cp-header-right">
+      <span class="cp-user-name">{{ customer_name }}</span>
+      <button id="cp-logout-btn" class="cp-btn-ghost">Logout</button>
+    </div>
+  </div>
+</header>
+
+<main class="cp-main">
+  <div class="cp-page-header">
+    <h1 class="cp-page-title">Dashboard</h1>
+  </div>
+
+  <!-- Summary Cards -->
+  <section class="cp-cards-grid">
+    <div class="cp-card">
+      <div class="cp-card-icon cp-icon-blue">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <div class="cp-card-body">
+        <div class="cp-card-label">Quotations</div>
+        <div class="cp-card-value">{{ dashboard.summary.quotation_count or 0 }}</div>
+      </div>
+    </div>
+    <div class="cp-card">
+      <div class="cp-card-icon cp-icon-purple">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <div class="cp-card-body">
+        <div class="cp-card-label">Active Orders</div>
+        <div class="cp-card-value">{{ dashboard.summary.active_order_count or 0 }}</div>
+      </div>
+    </div>
+    <div class="cp-card cp-card-warning">
+      <div class="cp-card-icon cp-icon-amber">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="cp-card-body">
+        <div class="cp-card-label">Outstanding Amount</div>
+        <div class="cp-card-value">{{ "{:,.2f}".format(dashboard.summary.outstanding_amount or 0) }}</div>
+      </div>
+    </div>
+    <div class="cp-card cp-card-success">
+      <div class="cp-card-icon cp-icon-green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="cp-card-body">
+        <div class="cp-card-label">Paid Invoices</div>
+        <div class="cp-card-value">{{ dashboard.summary.paid_invoice_count or 0 }}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Quotations -->
+  <section class="cp-section">
+    <div class="cp-section-header">
+      <h2 class="cp-section-title">Recent Quotations</h2>
+      <a href="/customer_portal/quotations" class="cp-link-sm">View all →</a>
+    </div>
+    {% if dashboard.recent_quotations %}
+    <div class="cp-table-wrap">
+      <table class="cp-table">
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for q in dashboard.recent_quotations %}
+          <tr>
+            <td class="cp-mono">{{ q.name }}</td>
+            <td>{{ q.transaction_date }}</td>
+            <td>{{ q.currency }} {{ "{:,.2f}".format(q.grand_total or 0) }}</td>
+            <td><span class="cp-badge cp-badge-{{ q.status | lower | replace(' ', '-') }}">{{ q.status }}</span></td>
+            <td><a href="/customer_portal/quotation?name={{ q.name }}" class="cp-link">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="cp-empty">No quotations found.</p>
+    {% endif %}
+  </section>
+
+  <!-- Active Orders -->
+  <section class="cp-section">
+    <div class="cp-section-header">
+      <h2 class="cp-section-title">Active Orders</h2>
+      <a href="/customer_portal/orders" class="cp-link-sm">View all →</a>
+    </div>
+    {% if dashboard.active_orders %}
+    <div class="cp-table-wrap">
+      <table class="cp-table">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Date</th>
+            <th>Delivery Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in dashboard.active_orders %}
+          <tr>
+            <td class="cp-mono">{{ o.name }}</td>
+            <td>{{ o.transaction_date }}</td>
+            <td>{{ o.delivery_date or "—" }}</td>
+            <td>{{ o.currency }} {{ "{:,.2f}".format(o.grand_total or 0) }}</td>
+            <td><span class="cp-badge cp-badge-{{ o.status | lower | replace(' ', '-') | replace('and', '') | replace('  ', '-') }}">{{ o.status }}</span></td>
+            <td><a href="/customer_portal/order?name={{ o.name }}" class="cp-link">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="cp-empty">No active orders found.</p>
+    {% endif %}
+  </section>
+
+  <!-- Recent Invoices -->
+  <section class="cp-section">
+    <div class="cp-section-header">
+      <h2 class="cp-section-title">Recent Invoices</h2>
+      <a href="/customer_portal/invoices" class="cp-link-sm">View all →</a>
+    </div>
+    {% if dashboard.recent_invoices %}
+    <div class="cp-table-wrap">
+      <table class="cp-table">
+        <thead>
+          <tr>
+            <th>Invoice</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Outstanding</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for inv in dashboard.recent_invoices %}
+          <tr>
+            <td class="cp-mono">{{ inv.name }}</td>
+            <td>{{ inv.posting_date }}</td>
+            <td>{{ inv.currency }} {{ "{:,.2f}".format(inv.grand_total or 0) }}</td>
+            <td class="{% if inv.outstanding_amount > 0 %}cp-text-warning{% endif %}">
+              {{ inv.currency }} {{ "{:,.2f}".format(inv.outstanding_amount or 0) }}
+            </td>
+            <td><span class="cp-badge cp-badge-{{ inv.status | lower | replace(' ', '-') }}">{{ inv.status }}</span></td>
+            <td><a href="/customer_portal/invoice?name={{ inv.name }}" class="cp-link">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="cp-empty">No invoices found.</p>
+    {% endif %}
+  </section>
+</main>
+
+<script>
+document.getElementById("cp-logout-btn").addEventListener("click", async function () {
+  this.disabled = true;
+  this.textContent = "Logging out…";
+  try {
+    await fetch("/api/method/prastara_ai.api.customer_portal.portal_logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      credentials: "same-origin"
+    });
+  } catch (_) {}
+  window.location.href = "/customer_portal";
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+{
+ "actions": [],
+ "creation": "2025-01-01 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "password_rules_section",
+  "use_customer_name_prefix",
+  "customer_name_chars",
+  "col_break_1",
+  "use_tax_id_suffix",
+  "tax_id_chars",
+  "section_break_2",
+  "use_email_prefix",
+  "email_chars",
+  "col_break_2",
+  "use_phone_suffix",
+  "phone_chars",
+  "separator_section",
+  "separator",
+  "session_section",
+  "session_expiry_hours",
+  "col_break_3",
+  "max_login_attempts",
+  "lockout_minutes"
+ ],
+ "fields": [
+  {
+   "fieldname": "password_rules_section",
+   "fieldtype": "Section Break",
+   "label": "Password Generation Rules",
+   "description": "Configure how customer portal passwords are auto-generated. Enable one or more rules — the parts are joined using the separator below."
+  },
+  {
+   "default": "1",
+   "fieldname": "use_customer_name_prefix",
+   "fieldtype": "Check",
+   "label": "Use First N Characters of Customer Name"
+  },
+  {
+   "default": "4",
+   "depends_on": "eval:doc.use_customer_name_prefix",
+   "fieldname": "customer_name_chars",
+   "fieldtype": "Int",
+   "label": "Number of Characters from Name"
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "use_tax_id_suffix",
+   "fieldtype": "Check",
+   "label": "Use Last N Digits of Tax ID / GSTIN"
+  },
+  {
+   "default": "4",
+   "depends_on": "eval:doc.use_tax_id_suffix",
+   "fieldname": "tax_id_chars",
+   "fieldtype": "Int",
+   "label": "Number of Digits from Tax ID"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "use_email_prefix",
+   "fieldtype": "Check",
+   "label": "Use First N Characters of Primary Email"
+  },
+  {
+   "default": "4",
+   "depends_on": "eval:doc.use_email_prefix",
+   "fieldname": "email_chars",
+   "fieldtype": "Int",
+   "label": "Number of Characters from Email"
+  },
+  {
+   "fieldname": "col_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "use_phone_suffix",
+   "fieldtype": "Check",
+   "label": "Use Last N Digits of Mobile / Phone"
+  },
+  {
+   "default": "4",
+   "depends_on": "eval:doc.use_phone_suffix",
+   "fieldname": "phone_chars",
+   "fieldtype": "Int",
+   "label": "Number of Digits from Phone"
+  },
+  {
+   "fieldname": "separator_section",
+   "fieldtype": "Section Break",
+   "label": "Separator"
+  },
+  {
+   "default": "",
+   "fieldname": "separator",
+   "fieldtype": "Data",
+   "label": "Separator Between Parts",
+   "description": "Leave blank for no separator. Example: use '@' to produce 'ACME@1234'."
+  },
+  {
+   "fieldname": "session_section",
+   "fieldtype": "Section Break",
+   "label": "Session & Security"
+  },
+  {
+   "default": "24",
+   "fieldname": "session_expiry_hours",
+   "fieldtype": "Int",
+   "label": "Session Expiry (Hours)"
+  },
+  {
+   "fieldname": "col_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "5",
+   "fieldname": "max_login_attempts",
+   "fieldtype": "Int",
+   "label": "Max Failed Login Attempts Before Lockout"
+  },
+  {
+   "default": "15",
+   "fieldname": "lockout_minutes",
+   "fieldtype": "Int",
+   "label": "Lockout Duration (Minutes)"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-01-01 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "prastara_ai",
+ "name": "Customer Portal Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

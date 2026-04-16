@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoices</title>
+  <link rel="stylesheet" href="/assets/prastara_ai/css/customer_portal.css">
+</head>
+<body class="cp-body cp-portal-body">
+
+{% include "prastara_ai/www/customer_portal/_header.html" %}
+
+<main class="cp-main">
+  <div class="cp-page-header">
+    <h1 class="cp-page-title">All Invoices</h1>
+  </div>
+
+  {% if invoices %}
+  <div class="cp-table-wrap">
+    <table class="cp-table">
+      <thead>
+        <tr>
+          <th>Invoice</th>
+          <th>Date</th>
+          <th>Due Date</th>
+          <th class="cp-text-right">Total</th>
+          <th class="cp-text-right">Outstanding</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inv in invoices %}
+        <tr>
+          <td class="cp-mono">{{ inv.name }}</td>
+          <td>{{ inv.posting_date }}</td>
+          <td>{{ inv.due_date or "—" }}</td>
+          <td class="cp-text-right">{{ inv.currency }} {{ "{:,.2f}".format(inv.grand_total or 0) }}</td>
+          <td class="cp-text-right {% if inv.outstanding_amount > 0 %}cp-text-warning{% endif %}">
+            {{ inv.currency }} {{ "{:,.2f}".format(inv.outstanding_amount or 0) }}
+          </td>
+          <td><span class="cp-badge cp-badge-{{ inv.status | lower | replace(' ', '-') }}">{{ inv.status }}</span></td>
+          <td><a href="/customer_portal/invoice?name={{ inv.name }}" class="cp-link">View →</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="cp-empty-state">
+    <p>No invoices found for your account.</p>
+  </div>
+  {% endif %}
+</main>
+
+{% include "prastara_ai/www/customer_portal/_logout_script.html" %}
+</body>
+</html>

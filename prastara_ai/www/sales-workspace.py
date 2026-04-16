@@ -14,6 +14,6 @@ def get_context(context):
 	context.show_sidebar = False
 	context.full_width = True
 	context.no_header = True
-	context.title = "Prastar AI Workspace"
-	context.page_title = "Prastar AI Workspace"
+	context.title = "Prastara AI Workspace"
+	context.page_title = "Prastara AI Workspace"
 	return context

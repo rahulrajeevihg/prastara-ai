@@ -130,9 +130,9 @@
 			<button
 				class="btn btn-primary btn-lg"
 				@click="$emit('generate-estimation')"
-				:disabled="processing || (!scopeText && !files.length && !opportunityReferences.files.length && !opportunityReferences.notes_text && !opportunityReferences.comments.length)"
+				:disabled="processing || (!scopeText && !files.length)"
 			>
-				{{ processing ? '⏳ Generating…' : '✦ Generate AI Estimation' }}
+				✦ Generate AI Estimation
 			</button>
 		</div>
 	</div>

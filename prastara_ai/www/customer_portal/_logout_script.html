@@ -1,0 +1,14 @@
+<script>
+document.getElementById("cp-logout-btn").addEventListener("click", async function () {
+  this.disabled = true;
+  this.textContent = "Logging out…";
+  try {
+    await fetch("/api/method/prastara_ai.api.customer_portal.portal_logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      credentials: "same-origin"
+    });
+  } catch (_) {}
+  window.location.href = "/customer_portal";
+});
+</script>

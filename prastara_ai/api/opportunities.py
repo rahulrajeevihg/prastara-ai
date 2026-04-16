@@ -61,7 +61,12 @@ def _build_quotation_item_description(item) -> str:
 	return "\n\n".join(part for part in description_parts if part)
 
 
-def _validate_estimation_row(row) -> list[str]:
+def _validate_estimation_row(row, strict: bool = False) -> list[str]:
+	"""
+	Validate a single BOQ row.
+	strict=False (draft save): only flag negative qty/rate.
+	strict=True  (quotation):  also flag zero rate — every line must be priced.
+	"""
 	errors: list[str] = []
 	qty = float(row.qty or 0)
 	rate = float(row.rate or 0)
@@ -70,6 +75,8 @@ def _validate_estimation_row(row) -> list[str]:
 		errors.append(_("Quantity must be greater than 0."))
 	if rate < 0:
 		errors.append(_("Rate cannot be negative."))
+	if strict and rate == 0:
+		errors.append(_("Rate is zero — please enter a price before converting to quotation."))
 
 	return errors
 
@@ -77,7 +84,7 @@ def _validate_estimation_row(row) -> list[str]:
 def _validate_estimation_for_save(doc) -> None:
 	validation_errors: list[str] = []
 	for row in doc.items:
-		for message in _validate_estimation_row(row):
+		for message in _validate_estimation_row(row, strict=False):
 			validation_errors.append(_("{0}: {1}").format(row.item_name or row.name, message))
 
 	if validation_errors:
@@ -89,7 +96,7 @@ def _validate_estimation_for_save(doc) -> None:
 def _validate_estimation_for_quotation(doc) -> None:
 	validation_errors: list[str] = []
 	for row in doc.items:
-		for message in _validate_estimation_row(row):
+		for message in _validate_estimation_row(row, strict=True):
 			validation_errors.append(_("{0}: {1}").format(row.item_name or row.name, message))
 
 	if validation_errors:

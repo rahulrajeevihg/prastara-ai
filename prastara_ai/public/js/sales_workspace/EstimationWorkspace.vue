@@ -203,6 +203,51 @@
 				@refresh="refreshSelectedItemDetail"
 			/>
 		</template>
+
+		<!-- ── AI Generation full-screen overlay ──────── -->
+		<Transition name="ai-overlay">
+			<div v-if="processing" class="ai-gen-overlay">
+				<div class="ai-gen-card">
+
+					<div class="ai-gen-ring-wrap">
+						<svg class="ai-gen-ring" viewBox="0 0 120 120">
+							<circle cx="60" cy="60" r="54" fill="none" stroke="rgba(139,92,246,0.12)" stroke-width="6"/>
+							<circle cx="60" cy="60" r="54" fill="none" stroke="url(#aiRingGrad)" stroke-width="6"
+								stroke-linecap="round" stroke-dasharray="120 220" class="ai-gen-arc"/>
+							<defs>
+								<linearGradient id="aiRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+									<stop offset="0%" stop-color="#8B5CF6"/>
+									<stop offset="100%" stop-color="#4ADE80"/>
+								</linearGradient>
+							</defs>
+						</svg>
+						<div class="ai-gen-icon">✦</div>
+					</div>
+
+					<p class="ai-gen-title">Generating AI Estimation</p>
+					<p class="ai-gen-stage">{{ aiGenStage }}</p>
+
+					<div class="ai-gen-dots">
+						<span></span><span></span><span></span>
+					</div>
+
+					<div class="ai-gen-steps">
+						<div
+							v-for="(step, i) in aiGenSteps"
+							:key="i"
+							:class="['ai-gen-step', i < aiGenActiveStep ? 'done' : i === aiGenActiveStep ? 'active' : 'pending']"
+						>
+							<span class="ai-step-icon">
+								{{ i < aiGenActiveStep ? '✓' : i === aiGenActiveStep ? '⏳' : '○' }}
+							</span>
+							<span>{{ step }}</span>
+						</div>
+					</div>
+
+					<p class="ai-gen-note">This usually takes 15–30 seconds depending on file size.</p>
+				</div>
+			</div>
+		</Transition>
 	</div>
 </template>
 
@@ -227,6 +272,46 @@ import {
 
 const props = defineProps(['opportunityName', 'theme']);
 const emit = defineEmits(['back', 'toggle-theme']);
+
+// ── AI generation overlay state ───────────────────────────────────────────────
+const aiGenSteps = [
+	'Uploading documents',
+	'Reading project scope',
+	'Analysing drawings with AI',
+	'Generating BOQ items',
+	'Calculating quantities & rates',
+	'Finalising estimation',
+];
+const aiGenMessages = [
+	'Uploading your documents…',
+	'Reading project scope…',
+	'Analysing drawings with AI…',
+	'Identifying scope items…',
+	'Calculating quantities & rates…',
+	'Building your BOQ…',
+	'Finalising estimation…',
+];
+const aiGenActiveStep = ref(0);
+const aiGenStage = ref(aiGenMessages[0]);
+let aiGenTimer = null;
+
+function startAiGenOverlay() {
+	aiGenActiveStep.value = 0;
+	aiGenStage.value = aiGenMessages[0];
+	let idx = 0;
+	aiGenTimer = setInterval(() => {
+		idx++;
+		if (idx < aiGenMessages.length) aiGenStage.value = aiGenMessages[idx];
+		if (aiGenActiveStep.value < aiGenSteps.length - 1) aiGenActiveStep.value++;
+	}, 4000);
+}
+
+function stopAiGenOverlay() {
+	clearInterval(aiGenTimer);
+	aiGenTimer = null;
+	aiGenActiveStep.value = 0;
+	aiGenStage.value = aiGenMessages[0];
+}
 
 const activeTab = ref('input');
 const tabs = [
@@ -275,7 +360,7 @@ const toastTitles = {
 	error: 'Action needed',
 	info: 'Notice',
 };
-const MAX_UPLOAD_SIZE = 20 * 1024 * 1024;
+const MAX_UPLOAD_SIZE = 50 * 1024 * 1024;
 const ALLOWED_FILE_EXTENSIONS = new Set(['pdf', 'dwg', 'dxf', 'txt']);
 
 function notify({ message, tone = 'info' }) {
@@ -453,6 +538,11 @@ function openQuotation(name) {
 }
 
 watch(
+	() => processing.value,
+	(running) => { running ? startAiGenOverlay() : stopAiGenOverlay(); }
+);
+
+watch(
 	() => estimation_name.value,
 	async (name) => {
 		clearAutoSaveTimer();
@@ -496,6 +586,7 @@ watch(
 
 onBeforeUnmount(() => {
 	clearAutoSaveTimer();
+	stopAiGenOverlay();
 });
 
 onMounted(loadDetails);

@@ -1,0 +1,515 @@
+/* ─── Design Tokens ─────────────────────────────────────────── */
+:root {
+  --cp-bg:         #09090B;
+  --cp-surface:    #18181B;
+  --cp-surface-2:  #27272A;
+  --cp-border:     rgba(255, 255, 255, 0.07);
+  --cp-text:       #FAFAFA;
+  --cp-text-2:     #A1A1AA;
+  --cp-text-3:     #71717A;
+  --cp-accent:     #8B5CF6;
+  --cp-accent-dim: rgba(139, 92, 246, 0.15);
+  --cp-green:      #4ADE80;
+  --cp-green-dim:  rgba(74, 222, 128, 0.12);
+  --cp-amber:      #FCD34D;
+  --cp-amber-dim:  rgba(252, 211, 77, 0.12);
+  --cp-red:        #F87171;
+  --cp-red-dim:    rgba(248, 113, 113, 0.12);
+  --cp-blue:       #60A5FA;
+  --cp-blue-dim:   rgba(96, 165, 250, 0.12);
+  --cp-radius:     10px;
+  --cp-radius-sm:  6px;
+  --cp-shadow:     0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ─── Base ──────────────────────────────────────────────────── */
+.cp-body {
+  background: var(--cp-bg);
+  color: var(--cp-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ─── Login page ────────────────────────────────────────────── */
+.cp-login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 70%), var(--cp-bg);
+}
+
+.cp-login-card {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--cp-shadow);
+}
+
+.cp-logo-wrap {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.cp-logo {
+  height: 48px;
+  width: auto;
+}
+
+.cp-login-title {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.cp-login-subtitle {
+  color: var(--cp-text-2);
+  text-align: center;
+  margin-bottom: 28px;
+  font-size: 13px;
+}
+
+/* ─── Forms ─────────────────────────────────────────────────── */
+.cp-form-group {
+  margin-bottom: 18px;
+}
+
+.cp-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cp-text-2);
+  margin-bottom: 6px;
+}
+
+.cp-input {
+  width: 100%;
+  background: var(--cp-surface-2);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius-sm);
+  color: var(--cp-text);
+  font-size: 14px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.cp-input:focus {
+  border-color: var(--cp-accent);
+}
+
+.cp-input::placeholder {
+  color: var(--cp-text-3);
+}
+
+/* ─── Buttons ───────────────────────────────────────────────── */
+.cp-btn-primary {
+  width: 100%;
+  background: var(--cp-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--cp-radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  margin-top: 4px;
+}
+
+.cp-btn-primary:hover { opacity: 0.88; }
+.cp-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cp-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--cp-border);
+  color: var(--cp-text-2);
+  border-radius: var(--cp-radius-sm);
+  font-size: 13px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.cp-btn-ghost:hover { border-color: var(--cp-text-2); color: var(--cp-text); }
+
+/* ─── Alerts ────────────────────────────────────────────────── */
+.cp-alert {
+  border-radius: var(--cp-radius-sm);
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.cp-alert-error {
+  background: var(--cp-red-dim);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  color: var(--cp-red);
+}
+
+.cp-alert-warning {
+  background: var(--cp-amber-dim);
+  border: 1px solid rgba(252, 211, 77, 0.3);
+  color: var(--cp-amber);
+}
+
+/* ─── Portal header ─────────────────────────────────────────── */
+.cp-header {
+  background: var(--cp-surface);
+  border-bottom: 1px solid var(--cp-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.cp-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.cp-brand { display: flex; align-items: center; text-decoration: none; }
+.cp-header-logo { height: 30px; width: auto; }
+
+.cp-nav { display: flex; gap: 4px; flex: 1; }
+
+.cp-nav-link {
+  color: var(--cp-text-2);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--cp-radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+
+.cp-nav-link:hover,
+.cp-nav-active {
+  color: var(--cp-text);
+  background: var(--cp-surface-2);
+}
+
+.cp-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cp-user-name {
+  font-size: 13px;
+  color: var(--cp-text-2);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Main layout ───────────────────────────────────────────── */
+.cp-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.cp-page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.cp-page-title {
+  font-size: 22px;
+  font-weight: 700;
+  flex: 1;
+}
+
+.cp-back-link {
+  color: var(--cp-text-2);
+  text-decoration: none;
+  font-size: 13px;
+  flex: 0 0 auto;
+}
+
+.cp-back-link:hover { color: var(--cp-text); }
+
+/* ─── Summary cards ─────────────────────────────────────────── */
+.cp-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.cp-card {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.cp-card-warning { border-color: rgba(252, 211, 77, 0.2); }
+.cp-card-success { border-color: rgba(74, 222, 128, 0.2); }
+
+.cp-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cp-icon-blue   { background: var(--cp-blue-dim);   color: var(--cp-blue); }
+.cp-icon-purple { background: var(--cp-accent-dim); color: var(--cp-accent); }
+.cp-icon-amber  { background: var(--cp-amber-dim);  color: var(--cp-amber); }
+.cp-icon-green  { background: var(--cp-green-dim);  color: var(--cp-green); }
+
+.cp-card-body { flex: 1; min-width: 0; }
+.cp-card-label { font-size: 12px; color: var(--cp-text-2); margin-bottom: 4px; }
+.cp-card-value { font-size: 22px; font-weight: 700; }
+
+/* ─── Sections ──────────────────────────────────────────────── */
+.cp-section {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.cp-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.cp-section-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cp-link-sm {
+  font-size: 12px;
+  color: var(--cp-accent);
+  text-decoration: none;
+}
+
+.cp-link-sm:hover { text-decoration: underline; }
+
+/* ─── Tables ────────────────────────────────────────────────── */
+.cp-table-wrap {
+  overflow-x: auto;
+  margin: -4px;
+  padding: 4px;
+}
+
+.cp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.cp-table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cp-text-3);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--cp-border);
+}
+
+.cp-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+.cp-table tr:last-child td { border-bottom: none; }
+.cp-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+.cp-text-right { text-align: right !important; }
+.cp-text-muted { color: var(--cp-text-2); }
+.cp-text-warning { color: var(--cp-amber); }
+.cp-mono { font-family: "SF Mono", "Fira Code", monospace; font-size: 12px; }
+.cp-desc { max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ─── Badges ────────────────────────────────────────────────── */
+.cp-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  background: var(--cp-surface-2);
+  color: var(--cp-text-2);
+}
+
+.cp-badge-lg { font-size: 13px; padding: 4px 12px; }
+
+/* Status-specific badge colours */
+.cp-badge-open,
+.cp-badge-draft                  { background: var(--cp-blue-dim);   color: var(--cp-blue); }
+.cp-badge-submitted              { background: var(--cp-accent-dim); color: var(--cp-accent); }
+.cp-badge-paid,
+.cp-badge-completed,
+.cp-badge-delivered              { background: var(--cp-green-dim);  color: var(--cp-green); }
+.cp-badge-unpaid,
+.cp-badge-overdue,
+.cp-badge-cancelled              { background: var(--cp-red-dim);    color: var(--cp-red); }
+.cp-badge-to-deliver-and-bill,
+.cp-badge-to-bill,
+.cp-badge-to-deliver,
+.cp-badge-partially-paid         { background: var(--cp-amber-dim);  color: var(--cp-amber); }
+.cp-badge-lost,
+.cp-badge-expired                { background: var(--cp-surface-2);  color: var(--cp-text-3); }
+
+/* ─── Links ─────────────────────────────────────────────────── */
+.cp-link {
+  color: var(--cp-accent);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.cp-link:hover { text-decoration: underline; }
+
+/* ─── Detail meta row ───────────────────────────────────────── */
+.cp-detail-meta {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 16px 24px;
+  margin-bottom: 20px;
+}
+
+.cp-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.cp-meta-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--cp-text-3); }
+.cp-meta-value { font-size: 14px; font-weight: 500; }
+
+/* ─── Progress bars ─────────────────────────────────────────── */
+.cp-progress-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.cp-progress-item { display: flex; flex-direction: column; gap: 6px; }
+.cp-progress-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--cp-text-2); }
+
+.cp-progress-bar {
+  height: 6px;
+  background: var(--cp-surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.cp-progress-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
+.cp-fill-blue  { background: var(--cp-blue); }
+.cp-fill-green { background: var(--cp-green); }
+
+/* Mini progress in table */
+.cp-mini-progress {
+  height: 4px;
+  background: var(--cp-surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+  width: 80px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.cp-mini-fill {
+  height: 100%;
+  background: var(--cp-accent);
+  border-radius: 999px;
+}
+
+/* ─── Totals box ────────────────────────────────────────────── */
+.cp-totals-box {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 16px 24px;
+  margin-top: 20px;
+  max-width: 360px;
+  margin-left: auto;
+}
+
+.cp-total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--cp-text-2);
+  border-bottom: 1px solid var(--cp-border);
+}
+
+.cp-total-row:last-child { border-bottom: none; }
+
+.cp-total-grand {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cp-text);
+  padding-top: 10px;
+}
+
+.cp-total-warning { color: var(--cp-amber); }
+
+/* ─── Empty states ──────────────────────────────────────────── */
+.cp-empty {
+  color: var(--cp-text-2);
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+.cp-empty-state {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: var(--cp-radius);
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--cp-text-2);
+}
+
+/* ─── Responsive ────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .cp-header-inner { gap: 12px; }
+  .cp-nav { display: none; }
+  .cp-cards-grid { grid-template-columns: 1fr 1fr; }
+  .cp-progress-wrap { grid-template-columns: 1fr; }
+  .cp-totals-box { max-width: 100%; }
+  .cp-login-card { padding: 28px 20px; }
+  .cp-main { padding: 20px 16px 48px; }
+}

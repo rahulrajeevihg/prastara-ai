@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Portal — Login</title>
+  <link rel="stylesheet" href="/assets/prastara_ai/css/customer_portal.css">
+</head>
+<body class="cp-body">
+
+<div class="cp-login-wrapper">
+  <div class="cp-login-card">
+    <div class="cp-logo-wrap">
+      <img src="/assets/prastara_ai/images/logo.svg" alt="Company Logo" class="cp-logo">
+    </div>
+    <h1 class="cp-login-title">Customer Portal</h1>
+    <p class="cp-login-subtitle">Enter your registered email and portal password to access your account.</p>
+
+    <div
+      id="cp-error"
+      class="cp-alert cp-alert-error"
+      {% if login_error %}style="display:block;"{% else %}style="display:none;"{% endif %}
+    >{% if login_error %}{{ login_error }}{% endif %}</div>
+
+    <form
+      id="cp-login-form"
+      method="post"
+      action="/customer_portal/authenticate"
+      autocomplete="on"
+      novalidate
+    >
+      <div class="cp-form-group">
+        <label class="cp-label" for="cp-identifier">Email Address</label>
+        <input
+          type="email"
+          id="cp-identifier"
+          name="identifier"
+          class="cp-input"
+          placeholder="yourname@example.com"
+          autocomplete="username"
+          required
+        >
+      </div>
+      <div class="cp-form-group">
+        <label class="cp-label" for="cp-password">Portal Password</label>
+        <input
+          type="password"
+          id="cp-password"
+          name="password"
+          class="cp-input"
+          placeholder="Your portal password"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+      <button type="submit" class="cp-btn-primary" id="cp-submit-btn">
+        Sign In
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  var form = document.getElementById("cp-login-form");
+  var btn = document.getElementById("cp-submit-btn");
+  var err = document.getElementById("cp-error");
+
+  form.addEventListener("submit", function () {
+    var identifier = document.getElementById("cp-identifier").value.trim();
+    var password = document.getElementById("cp-password").value;
+
+    if (!identifier || !password) {
+      err.textContent = "Please enter your email and password.";
+      err.style.display = "block";
+      return false;
+    }
+
+    err.style.display = "none";
+    btn.disabled = true;
+    btn.textContent = "Signing in...";
+    return true;
+  });
+})();
+</script>
+
+</body>
+</html>

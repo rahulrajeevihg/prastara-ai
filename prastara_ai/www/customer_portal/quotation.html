@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quotation {{ doc.name }}</title>
+  <link rel="stylesheet" href="/assets/prastara_ai/css/customer_portal.css">
+</head>
+<body class="cp-body cp-portal-body">
+
+{% include "prastara_ai/www/customer_portal/_header.html" %}
+
+<main class="cp-main">
+  <div class="cp-page-header">
+    <a href="/customer_portal/quotations" class="cp-back-link">← Back to Quotations</a>
+    <h1 class="cp-page-title">Quotation {{ doc.name }}</h1>
+    <span class="cp-badge cp-badge-{{ doc.status | lower | replace(' ', '-') }} cp-badge-lg">{{ doc.status }}</span>
+  </div>
+
+  <!-- Meta info -->
+  <div class="cp-detail-meta">
+    <div class="cp-meta-item">
+      <span class="cp-meta-label">Date</span>
+      <span class="cp-meta-value">{{ doc.transaction_date }}</span>
+    </div>
+    {% if doc.valid_till %}
+    <div class="cp-meta-item">
+      <span class="cp-meta-label">Valid Till</span>
+      <span class="cp-meta-value">{{ doc.valid_till }}</span>
+    </div>
+    {% endif %}
+    <div class="cp-meta-item">
+      <span class="cp-meta-label">Currency</span>
+      <span class="cp-meta-value">{{ doc.currency }}</span>
+    </div>
+  </div>
+
+  <!-- Line items -->
+  <section class="cp-section">
+    <h2 class="cp-section-title">Items</h2>
+    <div class="cp-table-wrap">
+      <table class="cp-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th>Description</th>
+            <th class="cp-text-right">Qty</th>
+            <th>UOM</th>
+            <th class="cp-text-right">Rate</th>
+            <th class="cp-text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in doc.items %}
+          <tr>
+            <td class="cp-text-muted">{{ loop.index }}</td>
+            <td><strong>{{ item.item_name }}</strong></td>
+            <td class="cp-text-muted cp-desc">{{ item.description or "—" }}</td>
+            <td class="cp-text-right">{{ "{:,.2f}".format(item.qty) }}</td>
+            <td>{{ item.uom }}</td>
+            <td class="cp-text-right">{{ doc.currency }} {{ "{:,.2f}".format(item.rate) }}</td>
+            <td class="cp-text-right"><strong>{{ doc.currency }} {{ "{:,.2f}".format(item.amount) }}</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Taxes -->
+  {% if doc.taxes %}
+  <section class="cp-section">
+    <h2 class="cp-section-title">Taxes &amp; Charges</h2>
+    <div class="cp-table-wrap">
+      <table class="cp-table">
+        <thead><tr><th>Description</th><th class="cp-text-right">Amount</th></tr></thead>
+        <tbody>
+          {% for tax in doc.taxes %}
+          <tr>
+            <td>{{ tax.description }}</td>
+            <td class="cp-text-right">{{ doc.currency }} {{ "{:,.2f}".format(tax.tax_amount) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Totals -->
+  <div class="cp-totals-box">
+    {% if doc.total_taxes_and_charges %}
+    <div class="cp-total-row">
+      <span>Subtotal</span>
+      <span>{{ doc.currency }} {{ "{:,.2f}".format(doc.grand_total - doc.total_taxes_and_charges) }}</span>
+    </div>
+    <div class="cp-total-row">
+      <span>Taxes &amp; Charges</span>
+      <span>{{ doc.currency }} {{ "{:,.2f}".format(doc.total_taxes_and_charges) }}</span>
+    </div>
+    {% endif %}
+    <div class="cp-total-row cp-total-grand">
+      <span>Grand Total</span>
+      <span>{{ doc.currency }} {{ "{:,.2f}".format(doc.grand_total) }}</span>
+    </div>
+  </div>
+</main>
+
+{% include "prastara_ai/www/customer_portal/_logout_script.html" %}
+</body>
+</html>

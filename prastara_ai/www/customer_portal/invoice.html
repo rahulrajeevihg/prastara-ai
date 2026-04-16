@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice {{ doc.name }}</title>
+  <link rel="stylesheet" href="/assets/prastara_ai/css/customer_portal.css">
+</head>
+<body class="cp-body cp-portal-body">
+
+{% include "prastara_ai/www/customer_portal/_header.html" %}
+
+<main class="cp-main">
+  <div class="cp-page-header">
+    <a href="/customer_portal/invoices" class="cp-back-link">← Back to Invoices</a>
+    <h1 class="cp-page-title">Invoice {{ doc.name }}</h1>
+    <span class="cp-badge cp-badge-{{ doc.status | lower | replace(' ', '-') }} cp-badge-lg">{{ doc.status }}</span>
+  </div>
+
+  <div class="cp-detail-meta">
+    <div class="cp-meta-item">
+      <span class="cp-meta-label">Invoice Date</span>
+      <span class="cp-meta-value">{{ doc.posting_date }}</span>
+    </div>
+    {% if doc.due_date %}
+    <div class="cp-meta-item">
+      <span class="cp-meta-label">Due Date</span>
+      <span class="cp-meta-value">{{ doc.due_date }}</span>
+    </div>
+    {% endif %}
+    <div class="cp-meta-item">
+      <span class="cp-meta-label">Currency</span>
+      <span class="cp-meta-value">{{ doc.currency }}</span>
+    </div>
+  </div>
+
+  {% if doc.outstanding_amount > 0 %}
+  <div class="cp-alert cp-alert-warning">
+    Outstanding balance: <strong>{{ doc.currency }} {{ "{:,.2f}".format(doc.outstanding_amount) }}</strong>
+  </div>
+  {% endif %}
+
+  <!-- Line items -->
+  <section class="cp-section">
+    <h2 class="cp-section-title">Items</h2>
+    <div class="cp-table-wrap">
+      <table class="cp-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th class="cp-text-right">Qty</th>
+            <th class="cp-text-right">Rate</th>
+            <th class="cp-text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in doc.items %}
+          <tr>
+            <td class="cp-text-muted">{{ loop.index }}</td>
+            <td><strong>{{ item.item_name }}</strong></td>
+            <td class="cp-text-right">{{ "{:,.2f}".format(item.qty) }}</td>
+            <td class="cp-text-right">{{ doc.currency }} {{ "{:,.2f}".format(item.rate) }}</td>
+            <td class="cp-text-right"><strong>{{ doc.currency }} {{ "{:,.2f}".format(item.amount) }}</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="cp-totals-box">
+    <div class="cp-total-row cp-total-grand">
+      <span>Grand Total</span>
+      <span>{{ doc.currency }} {{ "{:,.2f}".format(doc.grand_total) }}</span>
+    </div>
+    <div class="cp-total-row {% if doc.outstanding_amount > 0 %}cp-total-warning{% endif %}">
+      <span>Outstanding</span>
+      <span>{{ doc.currency }} {{ "{:,.2f}".format(doc.outstanding_amount) }}</span>
+    </div>
+  </div>
+</main>
+
+{% include "prastara_ai/www/customer_portal/_logout_script.html" %}
+</body>
+</html>

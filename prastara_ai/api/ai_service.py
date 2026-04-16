@@ -47,67 +47,94 @@ FITOUT_CATEGORIES = [
 	"General",
 ]
 
-_DEFAULT_ROLE_PROMPT = """You are an expert Estimation Engineer specializing in fit-out and interior decoration projects
-in the Middle East (UAE/GCC). Your role is to analyse project scope, client briefs, and design drawings,
-then produce a detailed, itemised Bill of Quantities (BOQ) suitable for a sales quotation.
+_DEFAULT_ROLE_PROMPT = """You are a senior Estimation Engineer with 15+ years of experience in fit-out and interior decoration projects \
+across the UAE and GCC. You work for a fit-out contractor producing detailed, itemised Bills of Quantities (BOQ) \
+for sales quotations. Your output must be thorough, commercially accurate, and ready to present to a client.
 
-IMPORTANT CONTEXT:
-- Company type: Fit-out / Interior Decor contractor
-- Currency: AED (UAE Dirhams) unless stated otherwise
-- All quantities must reflect realistic fit-out trade measurements (sqft, lm, nos, lot)
-- Separate MATERIALS (physical supply items) from SERVICES (labour, installation, professional fees)
-- Group every item under one of these standard trade categories:
+COMPANY CONTEXT:
+- Company type: Fit-out / Interior Decor contractor (supply + install)
+- Market: UAE / GCC — all rates in AED, exclusive of VAT (5% VAT is added separately at invoice stage)
+- Your BOQ will be converted directly into an ERPNext Quotation, so accuracy and completeness are critical
+
+TRADE CATEGORIES — every item must belong to one of these:
   Flooring | Walls & Wall Cladding | Ceiling & Gypsum | Joinery & Carpentry |
   Doors & Windows | Glass & Glazing | Electrical & Lighting | Plumbing & Sanitary |
   HVAC & MEP | Furniture & FF&E | Paint & Finishes | Stonework & Marble |
-  Services & Labour | Project Management | General"""
+  Services & Labour | Project Management | General
+
+SUPPLY vs INSTALLATION — always split into two separate line items:
+  1. A "Material" line for supply of the product (tiles, gypsum board, timber, fixtures, etc.)
+  2. A "Service" line for installation / labour under the same category and room_zone
+  Never combine supply and install into a single line item.
+
+THOROUGHNESS REQUIREMENT:
+  - Produce a minimum of 3 line-item pairs (Material + Service) per identified room or zone
+  - A complete BOQ for a typical fit-out project should contain at least 20 line items
+  - Never produce a sparse or summary-level BOQ — clients expect full trade breakdowns"""
 
 _FORMAT_AND_RULES_PROMPT = """
-RESPONSE FORMAT — return ONLY valid JSON, no prose:
+RESPONSE FORMAT — return ONLY valid JSON, no markdown, no prose outside the JSON object:
 {
-  "project_title": "Short descriptive project name",
-  "scope_summary": "2-3 sentence summary of the overall scope",
-  "project_area_sqft": 0.0,
-  "assumptions": "Key assumptions made (materials grade, brand neutral unless specified, etc.)",
-  "exclusions": "What is NOT included (e.g. structural works, MEP design fees, authority approvals)",
+  "project_title": "Short descriptive project name (e.g. Office Fit-Out — Al Quoz, Dubai)",
+  "scope_summary": "2-3 sentences summarising scope, location, and key trades covered.",
+  "project_area_sqft": 1500.0,
+  "assumptions": "Bullet-pointed assumptions: material grade (mid-range unless specified), brand-neutral, rates ex-VAT, etc.",
+  "exclusions": "What is NOT included: structural works, authority approvals, MEP design fees, furniture unless specified.",
   "items": [
     {
       "category": "Flooring",
       "room_zone": "Reception",
       "item_name": "Porcelain Floor Tiles 600x600mm",
-      "description": "Supply and install rectified porcelain tiles including adhesive, grout and levelling",
+      "description": "Supply of rectified porcelain tiles 600x600mm, mid-range grade, including adhesive and grout",
       "qty": 250.0,
       "uom": "Sqft",
       "type": "Material",
-      "unit_rate": 28.0,
+      "unit_rate": 22.0,
       "confidence": 0.90,
-      "remarks": "Rate includes supply + installation. Grade: mid-range."
+      "remarks": "Mid-range porcelain. Rate is supply only, ex-VAT."
     },
     {
-      "category": "Services & Labour",
+      "category": "Flooring",
       "room_zone": "Reception",
-      "item_name": "Tiling Labour",
-      "description": "Skilled tiling labour for floor and skirting installation",
+      "item_name": "Porcelain Tile Installation — Reception Floor",
+      "description": "Skilled tiling labour for floor installation including levelling, grouting and skirting",
       "qty": 250.0,
       "uom": "Sqft",
       "type": "Service",
       "unit_rate": 8.0,
-      "confidence": 0.95,
-      "remarks": "Separate line if materials are being procured separately"
+      "confidence": 0.92,
+      "remarks": "Installation rate only, ex-VAT."
     }
   ]
 }
 
 RULES:
-1. Every item MUST have a category from the approved list above.
-2. type must be exactly "Material" or "Service".
-3. unit_rate is your best market-rate estimate in AED. Use 0 if truly unknown.
-4. confidence is 0.0–1.0 reflecting how certain you are about qty and rate.
-5. uom must be one of: Sqft, Sqm, Lm, Nos, Lot, Set, Day, Month.
-6. If a drawing or PDF is provided, extract dimensions and areas relevant to your defined scope only — ignore sections of the document outside your scope.
-7. Always include a "Project Management" line (typically 5-8% of total material cost as a Service).
-8. Include `room_zone` whenever the scope suggests a room, area, zone, level, or section.
-9. SCOPE RESTRICTION: Only estimate items that fall within the role and scope defined above. Do not include items from parts of the document that are outside your defined scope."""
+1. Every item MUST have a category from the approved trade category list.
+2. "type" must be exactly "Material" or "Service" — no other values.
+3. "unit_rate" MUST be a positive number greater than 0. Never use 0. \
+Provide your best UAE/GCC current market rate in AED even for uncertain items — use a reasonable industry average. \
+If uncertain, lower the confidence score instead of zeroing the rate. A unit_rate of 0 is invalid and will be rejected.
+4. All rates are ex-VAT (exclusive of 5% UAE VAT). Do not add VAT to unit_rate values.
+5. "confidence" is 0.0–1.0 reflecting certainty about both quantity and rate. \
+Use ≥0.85 when derived from clear drawing dimensions, 0.65–0.84 when estimated, <0.65 when highly uncertain.
+6. "uom" must be one of: Sqft, Sqm, Lm, Nos, Lot, Set, Hr, Day, Month.
+7. "room_zone" is required for every item. Use the room or area name from the drawing. \
+If no specific room is identified, use the zone name (e.g. "General", "Common Areas", "Throughout").
+8. "project_area_sqft" must reflect the total estimated floor area of the project scope. \
+If not explicitly stated, calculate it from visible plan dimensions. \
+If dimensions are absent, estimate from context (typical UAE office floor = 1,500–3,000 Sqft, \
+retail unit = 500–2,000 Sqft, villa = 3,000–8,000 Sqft) and note the assumption.
+9. DRAWINGS — extract ALL elements visible across every page: floor plans, elevations, sections, \
+reflected ceiling plans, schedules, legends, and title blocks. Do not skip any trade or zone. \
+If something is visible on the drawing, it must appear in the BOQ.
+10. MISSING DIMENSIONS — if a dimension is not readable, estimate the area from adjacent readable \
+dimensions or use typical room proportions. Always state the method used in "assumptions".
+11. Always include a "Project Management" Service line (5–8% of total estimated project value) \
+under category "Project Management".
+12. Always include a "Preliminary & Mobilisation" Service line under "Services & Labour" \
+covering site setup, protection, and waste disposal (typically 2–4% of project value).
+13. Produce at least 3 Material+Service item pairs per identified room/zone. \
+A thorough BOQ for any real fit-out project must have a minimum of 20 total line items."""
 
 SYSTEM_PROMPT = _DEFAULT_ROLE_PROMPT + "\n" + _FORMAT_AND_RULES_PROMPT
 
@@ -251,9 +278,9 @@ class AIService:
 			item_type = "Material"
 
 		unit_rate = item.get("unit_rate")
-		if unit_rate is None:
+		if unit_rate is None or unit_rate == 0:
 			unit_rate = item.get("rate")
-		if unit_rate is None:
+		if unit_rate is None or unit_rate == 0:
 			unit_rate = item.get("price")
 
 		description = item.get("description") or item.get("details") or item.get("scope") or ""
@@ -265,6 +292,14 @@ class AIService:
 
 		category = item.get("category") or item.get("item_category") or item.get("trade") or "General"
 
+		# Ensure rate is a positive number — treat None, 0, or negative as missing
+		try:
+			rate_val = float(unit_rate) if unit_rate is not None else 0.0
+		except (TypeError, ValueError):
+			rate_val = 0.0
+		if rate_val <= 0:
+			rate_val = None  # Signal to the caller that rate is genuinely unknown
+
 		return {
 			"category": category,
 			"item_name": item.get("item_name") or item.get("name") or item.get("title") or "Unnamed Item",
@@ -273,7 +308,8 @@ class AIService:
 			"qty": item.get("qty") if item.get("qty") is not None else item.get("quantity", 1),
 			"uom": item.get("uom") or item.get("unit") or "Nos",
 			"type": item_type,
-			"unit_rate": unit_rate if unit_rate is not None else 0,
+			"unit_rate": rate_val,
+			"rate_missing": rate_val is None,
 			"confidence": item.get("confidence", item.get("score", 1.0)),
 			"remarks": remarks or "",
 		}
@@ -342,11 +378,20 @@ class AIService:
 		}
 		return json.dumps(audit_payload, indent=2)
 
+	# MIME types for direct image uploads
+	_IMAGE_MIME_TYPES = {
+		".jpg": "image/jpeg",
+		".jpeg": "image/jpeg",
+		".png": "image/png",
+		".webp": "image/webp",
+	}
+
 	def process_input(
 		self, text: str | None = None, file_urls: list[str] | None = None
 	) -> dict[str, Any]:
 		text_parts = []
-		vision_images: list[dict] = []  # {file_name, base64_images}
+		# Each entry: {file_name, images: [b64str, ...], mime_type: str}
+		vision_images: list[dict] = []
 
 		if text:
 			text_parts.append(f"CLIENT BRIEF / SCOPE DESCRIPTION:\n{text}")
@@ -358,19 +403,44 @@ class AIService:
 				fname = os.path.basename(url)
 
 				if ext == ".pdf":
+					# Always render as vision images for accurate drawing analysis
+					imgs = self._pdf_to_base64_images(file_path)
+					if imgs:
+						vision_images.append({"file_name": fname, "images": imgs, "mime_type": "image/png"})
+					# Also extract text layer (schedules, legends, specs) — send alongside images
 					extracted = self._extract_from_pdf(file_path)
 					if extracted.strip():
-						text_parts.append(f"EXTRACTED TEXT FROM PDF ({fname}):\n{extracted}")
-					else:
-						# No text layer — render as images for GPT-4o vision
-						imgs = self._pdf_to_base64_images(file_path)
-						if imgs:
-							vision_images.append({"file_name": fname, "images": imgs})
-						else:
-							text_parts.append(f"[PDF {fname} has no extractable text and could not be rendered as images]")
+						text_parts.append(f"EXTRACTED TEXT FROM PDF ({fname}) — use this alongside the visual pages:\n{extracted[:6000]}")
+					if not imgs and not extracted.strip():
+						text_parts.append(f"[PDF {fname} could not be processed — no text and no renderable pages]")
+
+				elif ext in self._IMAGE_MIME_TYPES:
+					# Direct image upload (JPG, PNG, WEBP) — send as vision
+					try:
+						with open(file_path, "rb") as img_f:
+							b64 = base64.b64encode(img_f.read()).decode("utf-8")
+						vision_images.append({
+							"file_name": fname,
+							"images": [b64],
+							"mime_type": self._IMAGE_MIME_TYPES[ext],
+						})
+					except Exception as e:
+						frappe.log_error(f"Image read error ({fname}): {e}")
+						text_parts.append(f"[Could not read image file: {fname}]")
+
+				elif ext in [".dwg", ".dxf"]:
+					file_content = self._extract_from_dwg(file_path)
+					text_parts.append(f"EXTRACTED CONTENT FROM DWG/DXF ({fname}):\n{file_content}")
+
+				elif ext in [".txt", ".csv"]:
+					try:
+						with open(file_path, encoding="utf-8", errors="ignore") as f:
+							text_parts.append(f"EXTRACTED CONTENT FROM FILE ({fname}):\n{f.read()[:8000]}")
+					except Exception:
+						text_parts.append(f"[Could not read text file: {fname}]")
+
 				else:
-					file_content = self.extract_content_from_file(url)
-					text_parts.append(f"EXTRACTED CONTENT FROM FILE ({fname}):\n{file_content}")
+					text_parts.append(f"[Unsupported file type: {ext} — {fname}]")
 
 		if not text_parts and not vision_images:
 			frappe.throw(_("Please provide a scope description or upload a drawing/brief."))
@@ -379,6 +449,7 @@ class AIService:
 		return self.get_ai_estimation(full_text, vision_images=vision_images)
 
 	def extract_content_from_file(self, file_url: str) -> str:
+		"""Extract text content from a file. For vision-capable types (PDF, images) use process_input instead."""
 		file_path = resolve_file_path(file_url)
 		extension = os.path.splitext(file_path)[1].lower()
 
@@ -392,6 +463,8 @@ class AIService:
 					return f.read()[:8000]
 			except Exception:
 				return "[Could not read text file]"
+		elif extension in self._IMAGE_MIME_TYPES:
+			return f"[Image file — processed via vision: {os.path.basename(file_url)}]"
 		else:
 			return f"[Unsupported file type: {extension}]"
 
@@ -408,7 +481,7 @@ class AIService:
 			frappe.log_error(f"PDF Extraction Error: {str(e)}")
 			return ""
 
-	def _pdf_to_base64_images(self, path: str, max_pages: int = 6, dpi: int = 150) -> list[str]:
+	def _pdf_to_base64_images(self, path: str, max_pages: int = 20, dpi: int = 200) -> list[str]:
 		"""Render PDF pages to base64 PNG images using pymupdf (fitz)."""
 		if not fitz:
 			return []
@@ -465,18 +538,36 @@ class AIService:
 			user_content: list | str
 			if vision_images:
 				user_content = []
+				# Prepend drawing-analysis instruction so GPT-4o knows how to read the drawings
+				user_content.append({
+					"type": "text",
+					"text": (
+						"DRAWING ANALYSIS INSTRUCTIONS:\n"
+						"You are analysing architectural and shop drawings to produce an accurate BOQ. "
+						"For each image page:\n"
+						"1. Read ALL visible text: room names, material callouts, finish schedules, legends, notes.\n"
+						"2. Read ALL dimension strings and annotations — use them to calculate areas (length × width) and linear runs.\n"
+						"3. Check the title block for project name, drawing title, scale, revision, and drawing number.\n"
+						"4. If a scale bar is present, use it to estimate sizes of unlabelled elements.\n"
+						"5. Identify every distinct finish or material zone (flooring type, wall cladding, ceiling system, joinery, etc.).\n"
+						"6. Count fixture quantities from reflected ceiling plans, furniture layouts, or equipment schedules.\n"
+						"7. Cross-reference multiple pages — floor plans, elevations, and sections together give the full picture.\n"
+						"Use all information extracted above to produce a detailed, accurate Bill of Quantities with real AED unit rates."
+					),
+				})
 				if content.strip():
 					user_content.append({"type": "text", "text": content})
 				for entry in vision_images:
 					fname = entry["file_name"]
+					mime_type = entry.get("mime_type", "image/png")
 					user_content.append({
 						"type": "text",
-						"text": f"Shop drawing / reference file: {fname} ({len(entry['images'])} page(s) follow)",
+						"text": f"File: {fname} — {len(entry['images'])} page(s) below. Extract dimensions, room areas, finish types, quantities, and any schedules visible.",
 					})
 					for b64 in entry["images"]:
 						user_content.append({
 							"type": "image_url",
-							"image_url": {"url": f"data:image/png;base64,{b64}", "detail": "high"},
+							"image_url": {"url": f"data:{mime_type};base64,{b64}", "detail": "high"},
 						})
 			else:
 				user_content = content
@@ -489,13 +580,46 @@ class AIService:
 				],
 				response_format={"type": "json_object"},
 				temperature=0.2,
-				max_tokens=4096,
+				max_tokens=16000,
 			)
-			parsed = self._normalize_estimation_response(
-				json.loads(response.choices[0].message.content)
-			)
+
+			choice = response.choices[0]
+			raw_content = choice.message.content
+
+			if not raw_content:
+				finish_reason = getattr(choice, "finish_reason", "unknown")
+				frappe.log_error(
+					title=_("OpenAI Empty Response"),
+					message=f"finish_reason={finish_reason}. The model returned no content. The input may be too large or the model hit an output limit.",
+				)
+				frappe.throw(_(
+					"The AI returned an empty response (finish_reason: {0}). "
+					"Try reducing the scope text length or the number of uploaded pages."
+				).format(finish_reason))
+
+			if choice.finish_reason == "length":
+				frappe.log_error(
+					title=_("OpenAI Response Truncated"),
+					message="Response was cut off at max_tokens. The BOQ may be incomplete.",
+				)
+
+			try:
+				parsed_json = json.loads(raw_content)
+			except json.JSONDecodeError as je:
+				frappe.log_error(
+					title=_("OpenAI JSON Parse Error"),
+					message=f"Could not parse AI response as JSON: {je}\n\nRaw content (first 1000 chars):\n{raw_content[:1000]}",
+				)
+				frappe.throw(_(
+					"The AI response could not be parsed as JSON. "
+					"This usually means the response was truncated. Try with fewer pages or a shorter scope."
+				))
+
+			parsed = self._normalize_estimation_response(parsed_json)
 			self._last_raw_response = json.dumps(parsed)
 			return parsed
+		except frappe.exceptions.ValidationError:
+			raise
 		except Exception as e:
 			frappe.log_error(title=_("OpenAI API Error")[:140], message=str(e))
 			frappe.throw(_("Failed to process with AI: {0}").format(str(e)))
@@ -918,6 +1042,15 @@ def process_estimation(
 			if items_found:
 				matched_item = items_found[0].name
 
+		# unit_rate is None when the AI returned 0/null — keep as 0 in the DB
+		# but lower confidence so the user knows it needs manual review
+		raw_rate = item.get("unit_rate")
+		rate_val = float(raw_rate) if raw_rate is not None and float(raw_rate) > 0 else 0.0
+		confidence_val = item.get("confidence", 1.0)
+		if rate_val == 0.0:
+			# AI couldn't price this item — flag it with low confidence
+			confidence_val = min(float(confidence_val or 1.0), 0.3)
+
 		estimation.append("items", {
 			"item_code": matched_item,
 			"item_name": item_name,
@@ -926,9 +1059,9 @@ def process_estimation(
 			"description": item.get("description", ""),
 			"qty": item.get("qty", 1),
 			"uom": item.get("uom", "Nos"),
-			"rate": item.get("unit_rate", 0),
+			"rate": rate_val,
 			"type": item_type if item_type in ("Material", "Service") else "Material",
-			"confidence": item.get("confidence", 1.0),
+			"confidence": confidence_val,
 			"source_reference": item.get("remarks", ""),
 			"pricing_detail_json": "",
 		})

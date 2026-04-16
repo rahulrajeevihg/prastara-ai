@@ -2,7 +2,9 @@
 	<div class="page-wrap">
 		<div class="stats-strip">
 			<div class="stat-card glass">
-				<div class="stat-icon si-blue">🎯</div>
+				<div class="stat-icon si-blue">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--blue)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+				</div>
 				<div class="stat-body">
 					<p class="stat-label">Open Opportunities</p>
 					<span class="stat-value">{{ formatInteger(state.summary.total_open) }}</span>
@@ -10,7 +12,9 @@
 				</div>
 			</div>
 			<div class="stat-card glass">
-				<div class="stat-icon si-green">💰</div>
+				<div class="stat-icon si-green">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green)"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+				</div>
 				<div class="stat-body">
 					<p class="stat-label">Pipeline Value</p>
 					<span class="stat-value">{{ formatCurrency(state.summary.total_value) }}</span>
@@ -18,7 +22,9 @@
 				</div>
 			</div>
 			<div class="stat-card glass">
-				<div class="stat-icon si-indigo">📊</div>
+				<div class="stat-icon si-indigo">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+				</div>
 				<div class="stat-body">
 					<p class="stat-label">Active Pipeline</p>
 					<span class="stat-value">{{ formatInteger(state.summary.active_pipeline) }}</span>
@@ -69,28 +75,28 @@
 							</div>
 						</div>
 						<div class="sc-item">
-							<div class="sc-dot" style="background: var(--indigo);"></div>
+							<div class="sc-dot" style="background:var(--accent);"></div>
 							<div>
 								<strong>Describe the scope</strong>
 								<p>Enter requirements or upload drawings, PDFs, or briefs.</p>
 							</div>
 						</div>
 						<div class="sc-item">
-							<div class="sc-dot" style="background: var(--blue);"></div>
+							<div class="sc-dot" style="background:var(--blue);"></div>
 							<div>
 								<strong>AI generates the BOQ</strong>
 								<p>GPT-4o produces a categorised Bill of Quantities with AED rates.</p>
 							</div>
 						</div>
 						<div class="sc-item">
-							<div class="sc-dot" style="background: var(--amber);"></div>
+							<div class="sc-dot" style="background:var(--amber);"></div>
 							<div>
 								<strong>Review &amp; adjust</strong>
 								<p>Edit quantities and rates before confirming.</p>
 							</div>
 						</div>
 						<div class="sc-item">
-							<div class="sc-dot" style="background: var(--purple);"></div>
+							<div class="sc-dot" style="background:var(--green);"></div>
 							<div>
 								<strong>Create Quotation</strong>
 								<p>One click converts your estimation into an ERPNext Quotation.</p>
@@ -100,20 +106,19 @@
 				</div>
 
 				<div class="sidebar-card glass">
-					<p class="sc-kicker">System</p>
-					<p class="sc-title">Pipeline Health</p>
-					<div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.82rem;">
-						<div style="display: flex; justify-content: space-between; color: var(--text-2);">
-							<span>Total records</span>
-							<strong style="color: var(--text);">{{ formatInteger(state.meta.total_count) }}</strong>
+					<p class="sc-kicker">Pipeline Health</p>
+					<div class="sc-stats">
+						<div class="sc-stat-row">
+							<span class="sc-stat-label">Total records</span>
+							<strong class="sc-stat-val">{{ formatInteger(state.meta.total_count) }}</strong>
 						</div>
-						<div style="display: flex; justify-content: space-between; color: var(--text-2);">
-							<span>Pipeline value</span>
-							<strong style="color: var(--text);">{{ formatCurrency(state.summary.total_value) }}</strong>
+						<div class="sc-stat-row">
+							<span class="sc-stat-label">Pipeline value</span>
+							<strong class="sc-stat-val">{{ formatCurrency(state.summary.total_value) }}</strong>
 						</div>
-						<div style="display: flex; justify-content: space-between; color: var(--text-2);">
-							<span>Conversion targets</span>
-							<strong style="color: var(--green);">{{ formatInteger(state.summary.active_pipeline) }}</strong>
+						<div class="sc-stat-row">
+							<span class="sc-stat-label">Conversion targets</span>
+							<strong class="sc-stat-val sc-stat-green">{{ formatInteger(state.summary.active_pipeline) }}</strong>
 						</div>
 					</div>
 				</div>

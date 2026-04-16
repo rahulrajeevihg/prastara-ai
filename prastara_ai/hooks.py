@@ -10,6 +10,22 @@ app_license = "mit"
 
 required_apps = ["erpnext"]
 
+# Customer Portal — redirect hyphenated URLs to underscore equivalents
+# (Python module names can't contain hyphens; www/ uses customer_portal/)
+website_redirects = [
+	{"source": "/portal", "target": "/customer_portal"},
+	{"source": "/customer-portal", "target": "/customer_portal"},
+	{"source": "/customer-portal/(.*)", "target": "/customer_portal/\\1"},
+]
+
+# Fixtures — export cp_custom_pin custom field on Customer after adding it via Customize Form
+fixtures = [
+	{
+		"dt": "Custom Field",
+		"filters": [["dt", "=", "Customer"], ["fieldname", "=", "cp_custom_pin"]],
+	}
+]
+
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
 # 	{

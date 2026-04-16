@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quotations</title>
+  <link rel="stylesheet" href="/assets/prastara_ai/css/customer_portal.css">
+</head>
+<body class="cp-body cp-portal-body">
+
+{% include "prastara_ai/www/customer_portal/_header.html" %}
+
+<main class="cp-main">
+  <div class="cp-page-header">
+    <h1 class="cp-page-title">All Quotations</h1>
+  </div>
+
+  {% if quotations %}
+  <div class="cp-table-wrap">
+    <table class="cp-table">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Date</th>
+          <th>Valid Till</th>
+          <th class="cp-text-right">Amount</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for q in quotations %}
+        <tr>
+          <td class="cp-mono">{{ q.name }}</td>
+          <td>{{ q.transaction_date }}</td>
+          <td>{{ q.valid_till or "—" }}</td>
+          <td class="cp-text-right">{{ q.currency }} {{ "{:,.2f}".format(q.grand_total or 0) }}</td>
+          <td><span class="cp-badge cp-badge-{{ q.status | lower | replace(' ', '-') }}">{{ q.status }}</span></td>
+          <td><a href="/customer_portal/quotation?name={{ q.name }}" class="cp-link">View →</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="cp-empty-state">
+    <p>No quotations found for your account.</p>
+  </div>
+  {% endif %}
+</main>
+
+{% include "prastara_ai/www/customer_portal/_logout_script.html" %}
+</body>
+</html>

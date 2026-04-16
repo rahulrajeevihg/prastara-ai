@@ -132,7 +132,7 @@ export function useEstimationWorkspaceActions({
 			if (!allowedFileExtensions.has(extension)) {
 				error = 'Unsupported file type. Use PDF, DWG, DXF, or TXT.';
 			} else if (file.size > maxUploadSize) {
-				error = 'File is too large. Maximum size is 20 MB.';
+				error = 'File is too large. Maximum size is 50 MB.';
 			}
 
 			return {

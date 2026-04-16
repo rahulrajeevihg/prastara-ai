@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order {{ doc.name }}</title>
+  <link rel="stylesheet" href="/assets/prastara_ai/css/customer_portal.css">
+</head>
+<body class="cp-body cp-portal-body">
+
+{% include "prastara_ai/www/customer_portal/_header.html" %}
+
+<main class="cp-main">
+  <div class="cp-page-header">
+    <a href="/customer_portal/orders" class="cp-back-link">← Back to Orders</a>
+    <h1 class="cp-page-title">Order {{ doc.name }}</h1>
+    <span class="cp-badge cp-badge-{{ doc.status | lower | replace(' ', '-') }} cp-badge-lg">{{ doc.status }}</span>
+  </div>
+
+  <div class="cp-detail-meta">
+    <div class="cp-meta-item">
+      <span class="cp-meta-label">Order Date</span>
+      <span class="cp-meta-value">{{ doc.transaction_date }}</span>
+    </div>
+    {% if doc.delivery_date %}
+    <div class="cp-meta-item">
+      <span class="cp-meta-label">Delivery Date</span>
+      <span class="cp-meta-value">{{ doc.delivery_date }}</span>
+    </div>
+    {% endif %}
+    <div class="cp-meta-item">
+      <span class="cp-meta-label">Currency</span>
+      <span class="cp-meta-value">{{ doc.currency }}</span>
+    </div>
+  </div>
+
+  <!-- Progress bars -->
+  <div class="cp-progress-wrap">
+    <div class="cp-progress-item">
+      <div class="cp-progress-label">
+        <span>Billed</span>
+        <span>{{ "{:.0f}".format(doc.per_billed) }}%</span>
+      </div>
+      <div class="cp-progress-bar">
+        <div class="cp-progress-fill cp-fill-blue" style="width: {{ doc.per_billed }}%"></div>
+      </div>
+    </div>
+    <div class="cp-progress-item">
+      <div class="cp-progress-label">
+        <span>Delivered</span>
+        <span>{{ "{:.0f}".format(doc.per_delivered) }}%</span>
+      </div>
+      <div class="cp-progress-bar">
+        <div class="cp-progress-fill cp-fill-green" style="width: {{ doc.per_delivered }}%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Line items -->
+  <section class="cp-section">
+    <h2 class="cp-section-title">Items</h2>
+    <div class="cp-table-wrap">
+      <table class="cp-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th class="cp-text-right">Qty</th>
+            <th>UOM</th>
+            <th class="cp-text-right">Rate</th>
+            <th class="cp-text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in doc.items %}
+          <tr>
+            <td class="cp-text-muted">{{ loop.index }}</td>
+            <td><strong>{{ item.item_name }}</strong></td>
+            <td class="cp-text-right">{{ "{:,.2f}".format(item.qty) }}</td>
+            <td>{{ item.uom }}</td>
+            <td class="cp-text-right">{{ doc.currency }} {{ "{:,.2f}".format(item.rate) }}</td>
+            <td class="cp-text-right"><strong>{{ doc.currency }} {{ "{:,.2f}".format(item.amount) }}</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="cp-totals-box">
+    <div class="cp-total-row cp-total-grand">
+      <span>Grand Total</span>
+      <span>{{ doc.currency }} {{ "{:,.2f}".format(doc.grand_total) }}</span>
+    </div>
+  </div>
+</main>
+
+{% include "prastara_ai/www/customer_portal/_logout_script.html" %}
+</body>
+</html>
