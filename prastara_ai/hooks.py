@@ -4,6 +4,7 @@ app_publisher = "ledworld"
 app_description = "Prastara AI app"
 app_email = "admin@example.com"
 app_license = "mit"
+frappe_version = ">=15.0.0 <16.0.0"
 
 # Apps
 # ------------------
