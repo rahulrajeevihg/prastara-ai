@@ -5,27 +5,190 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "api_section",
   "openai_api_key",
   "model_name",
-  "default_prompt"
+  "col_break_api",
+  "default_profile",
+  "global_defaults_section",
+  "prompt_mode",
+  "default_prompt",
+  "schema_type",
+  "workflow_type",
+  "pricing_mode",
+  "specialized_prompts_section",
+  "review_prompt",
+  "takeoff_prompt",
+  "item_detail_prompt",
+  "rule_toggles_section",
+  "require_material_service_split",
+  "require_room_zone",
+  "require_project_area",
+  "col_break_rules",
+  "minimum_line_item_count",
+  "allow_custom_categories",
+  "validation_section",
+  "min_confidence_to_accept",
+  "flag_zero_rate",
+  "require_manual_review_on_missing_fields"
  ],
  "fields": [
   {
+   "fieldname": "api_section",
+   "fieldtype": "Section Break",
+   "label": "API & Model"
+  },
+  {
    "fieldname": "openai_api_key",
    "fieldtype": "Password",
-   "label": "OpenAI API Key"
+   "label": "OpenAI API Key",
+   "reqd": 1
   },
   {
    "default": "gpt-4o",
    "fieldname": "model_name",
    "fieldtype": "Select",
-   "label": "Model Name",
-   "options": "gpt-4o\ngpt-4-turbo"
+   "label": "Default Model",
+   "options": "gpt-4o\ngpt-4o-mini\ngpt-4-turbo\ngpt-4.1\ngpt-4.1-mini",
+   "description": "The model used when a profile does not specify one."
+  },
+  {
+   "fieldname": "col_break_api",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_profile",
+   "fieldtype": "Link",
+   "label": "Default Estimation Profile",
+   "options": "Estimation Profile",
+   "description": "If set, this profile's settings are used as the global default for all new estimations. Individual Estimation records can override this by selecting a different profile."
+  },
+  {
+   "fieldname": "global_defaults_section",
+   "fieldtype": "Section Break",
+   "label": "Global Defaults",
+   "description": "These values are used when no Estimation Profile is selected, or when a profile field is left blank."
+  },
+  {
+   "default": "fully_custom",
+   "fieldname": "prompt_mode",
+   "fieldtype": "Select",
+   "label": "Prompt Mode",
+   "options": "fully_custom\ncustom_with_builtin_schema\nstrict_builtin",
+   "description": "fully_custom: Default Prompt controls everything. custom_with_builtin_schema: Default Prompt sets the role; schema block is auto-appended. strict_builtin: ignores Default Prompt, uses built-in schema only."
   },
   {
    "fieldname": "default_prompt",
-   "fieldtype": "Small Text",
-   "label": "Default Prompt Template"
+   "fieldtype": "Long Text",
+   "label": "Default Prompt",
+   "description": "System prompt used when no profile is selected (or when the selected profile has no system_prompt). Must instruct the model to return valid JSON."
+  },
+  {
+   "default": "generic_line_items",
+   "fieldname": "schema_type",
+   "fieldtype": "Select",
+   "label": "Default Schema Type",
+   "options": "generic_line_items\ntrade_boq\nshop_drawing_items\ncost_breakdown\nroomwise_boq\nassetwise_estimate"
+  },
+  {
+   "default": "document_based_boq",
+   "fieldname": "workflow_type",
+   "fieldtype": "Select",
+   "label": "Default Workflow Type",
+   "options": "document_based_boq\nsimple_text_estimation\nvision_first\ndrawing_takeoff_then_pricing",
+   "description": "Controls how uploaded files are processed. document_based_boq: text extraction + vision (default). simple_text_estimation: typed scope only, files ignored. vision_first: vision rendering only, no text extraction. drawing_takeoff_then_pricing: two-pass — takeoff first, pricing second."
+  },
+  {
+   "default": "ai_generated_rates",
+   "fieldname": "pricing_mode",
+   "fieldtype": "Select",
+   "label": "Default Pricing Mode",
+   "options": "ai_generated_rates\nmanual_review_only\nrate_card_with_ai_fallback"
+  },
+  {
+   "fieldname": "specialized_prompts_section",
+   "fieldtype": "Section Break",
+   "label": "Global Specialized Prompts",
+   "description": "Global fallback prompts for secondary features. Profiles can override these."
+  },
+  {
+   "fieldname": "review_prompt",
+   "fieldtype": "Long Text",
+   "label": "Commercial Review Prompt"
+  },
+  {
+   "fieldname": "takeoff_prompt",
+   "fieldtype": "Long Text",
+   "label": "Drawing Takeoff Prompt"
+  },
+  {
+   "fieldname": "item_detail_prompt",
+   "fieldtype": "Long Text",
+   "label": "Item Pricing Detail Prompt"
+  },
+  {
+   "fieldname": "rule_toggles_section",
+   "fieldtype": "Section Break",
+   "label": "Global Rule Toggles"
+  },
+  {
+   "default": "0",
+   "fieldname": "require_material_service_split",
+   "fieldtype": "Check",
+   "label": "Require Material / Service Split"
+  },
+  {
+   "default": "0",
+   "fieldname": "require_room_zone",
+   "fieldtype": "Check",
+   "label": "Require Room / Zone"
+  },
+  {
+   "default": "0",
+   "fieldname": "require_project_area",
+   "fieldtype": "Check",
+   "label": "Require Project Area"
+  },
+  {
+   "fieldname": "col_break_rules",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "minimum_line_item_count",
+   "fieldtype": "Int",
+   "label": "Minimum Line Item Count",
+   "description": "0 = no minimum enforced."
+  },
+  {
+   "default": "1",
+   "fieldname": "allow_custom_categories",
+   "fieldtype": "Check",
+   "label": "Allow Free-text Categories",
+   "description": "When enabled, the AI can return any category name. When disabled, items with categories not matching the profile are flagged as Schema Error."
+  },
+  {
+   "fieldname": "validation_section",
+   "fieldtype": "Section Break",
+   "label": "Global Validation Thresholds"
+  },
+  {
+   "default": "0.5",
+   "fieldname": "min_confidence_to_accept",
+   "fieldtype": "Float",
+   "label": "Min Confidence to Accept"
+  },
+  {
+   "default": "1",
+   "fieldname": "flag_zero_rate",
+   "fieldtype": "Check",
+   "label": "Flag Items with Zero Rate"
+  },
+  {
+   "default": "1",
+   "fieldname": "require_manual_review_on_missing_fields",
+   "fieldtype": "Check",
+   "label": "Flag Items with Missing Fields"
   }
  ],
  "index_web_pages_for_search": 1,

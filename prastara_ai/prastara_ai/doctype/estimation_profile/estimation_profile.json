@@ -1,0 +1,238 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:profile_name",
+ "creation": "2024-04-11 12:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "profile_name",
+  "industry_hint",
+  "col_break_top",
+  "ai_config_section",
+  "model_name",
+  "prompt_mode",
+  "schema_type",
+  "workflow_type",
+  "pricing_mode",
+  "system_prompt",
+  "specialized_prompts_section",
+  "review_prompt",
+  "takeoff_prompt",
+  "item_detail_prompt",
+  "rule_toggles_section",
+  "require_material_service_split",
+  "require_room_zone",
+  "require_project_area",
+  "col_break_rules",
+  "minimum_line_item_count",
+  "validation_section",
+  "min_confidence_to_accept",
+  "flag_zero_rate",
+  "require_manual_review_on_missing_fields"
+ ],
+ "fields": [
+  {
+   "bold": 1,
+   "fieldname": "profile_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Profile Name",
+   "reqd": 1,
+   "description": "A short name for this profile, e.g. 'Fit-out Standard BOQ', 'Signage Quick Quote', 'Shop Drawing Costing'."
+  },
+  {
+   "fieldname": "industry_hint",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Industry / Use-case",
+   "description": "Free-text label for the industry or use-case this profile is designed for. Purely descriptive — does not affect logic."
+  },
+  {
+   "fieldname": "col_break_top",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ai_config_section",
+   "fieldtype": "Section Break",
+   "label": "AI Configuration"
+  },
+  {
+   "fieldname": "model_name",
+   "fieldtype": "Select",
+   "label": "Model Name",
+   "options": "\ngpt-4o\ngpt-4o-mini\ngpt-4-turbo\ngpt-4.1\ngpt-4.1-mini",
+   "description": "Leave blank to inherit the global model from AI Estimation Settings."
+  },
+  {
+   "default": "fully_custom",
+   "fieldname": "prompt_mode",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Prompt Mode",
+   "options": "fully_custom\ncustom_with_builtin_schema\nstrict_builtin",
+   "description": "fully_custom: System Prompt below controls everything — the AI role AND the output shape. custom_with_builtin_schema: System Prompt sets the AI role; the selected Schema Type's JSON structure is automatically appended. strict_builtin: Uses only the built-in schema for the selected Schema Type, ignoring the System Prompt field entirely."
+  },
+  {
+   "default": "generic_line_items",
+   "fieldname": "schema_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Schema Type",
+   "options": "generic_line_items\ntrade_boq\nshop_drawing_items\ncost_breakdown\nroomwise_boq\nassetwise_estimate",
+   "description": "Output structure expected from the AI. Applied when prompt_mode is custom_with_builtin_schema or strict_builtin."
+  },
+  {
+   "default": "document_based_boq",
+   "fieldname": "workflow_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Workflow Type",
+   "options": "document_based_boq\nsimple_text_estimation\nvision_first\ndrawing_takeoff_then_pricing",
+   "description": "Controls how inputs are processed. document_based_boq: extracts text + renders vision from every file (default). simple_text_estimation: ignores file attachments, uses only the typed scope. vision_first: renders all PDFs as images, skips text extraction. drawing_takeoff_then_pricing: two-step — runs a takeoff pass first, feeds the result into the pricing pass."
+  },
+  {
+   "default": "ai_generated_rates",
+   "fieldname": "pricing_mode",
+   "fieldtype": "Select",
+   "label": "Pricing Mode",
+   "options": "ai_generated_rates\nmanual_review_only\nrate_card_with_ai_fallback",
+   "description": "ai_generated_rates: AI provides all unit rates. manual_review_only: AI generates item structure only; all rates are flagged for manual entry. rate_card_with_ai_fallback: rate card lookup first, AI fills gaps."
+  },
+  {
+   "fieldname": "system_prompt",
+   "fieldtype": "Long Text",
+   "label": "System Prompt",
+   "description": "The full system instruction sent to the AI for estimations using this profile. Must instruct the model to return valid JSON. Ignored when prompt_mode is strict_builtin."
+  },
+  {
+   "fieldname": "specialized_prompts_section",
+   "fieldtype": "Section Break",
+   "label": "Specialized Prompts",
+   "description": "Override the built-in prompts for secondary AI features (commercial review, drawing takeoff, item detail). Leave blank to use the global settings or built-in generic defaults."
+  },
+  {
+   "fieldname": "review_prompt",
+   "fieldtype": "Long Text",
+   "label": "Commercial Review Prompt"
+  },
+  {
+   "fieldname": "takeoff_prompt",
+   "fieldtype": "Long Text",
+   "label": "Drawing Takeoff Prompt"
+  },
+  {
+   "fieldname": "item_detail_prompt",
+   "fieldtype": "Long Text",
+   "label": "Item Pricing Detail Prompt"
+  },
+  {
+   "fieldname": "rule_toggles_section",
+   "fieldtype": "Section Break",
+   "label": "Rule Toggles",
+   "description": "When enabled, these rules are injected into the AI prompt (in custom_with_builtin_schema mode) and also applied as post-generation validation checks."
+  },
+  {
+   "default": "0",
+   "fieldname": "require_material_service_split",
+   "fieldtype": "Check",
+   "label": "Require Material / Service Split",
+   "description": "Each item must have type = Material or Service. Items missing this are flagged as Schema Error."
+  },
+  {
+   "default": "0",
+   "fieldname": "require_room_zone",
+   "fieldtype": "Check",
+   "label": "Require Room / Zone",
+   "description": "Each item must have a room_zone value. Items missing this are flagged as Needs Review."
+  },
+  {
+   "default": "0",
+   "fieldname": "require_project_area",
+   "fieldtype": "Check",
+   "label": "Require Project Area",
+   "description": "A non-zero project_area_sqft must be present in the AI response. A warning is added to the audit log if missing."
+  },
+  {
+   "fieldname": "col_break_rules",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "minimum_line_item_count",
+   "fieldtype": "Int",
+   "label": "Minimum Line Item Count",
+   "description": "If the AI returns fewer items than this number, a validation warning is added to the audit log. Set to 0 to disable."
+  },
+  {
+   "fieldname": "validation_section",
+   "fieldtype": "Section Break",
+   "label": "Validation Thresholds"
+  },
+  {
+   "default": "0.5",
+   "fieldname": "min_confidence_to_accept",
+   "fieldtype": "Float",
+   "label": "Min Confidence to Accept",
+   "description": "Items with AI confidence below this are flagged Needs Review. Range 0.0–1.0."
+  },
+  {
+   "default": "1",
+   "fieldname": "flag_zero_rate",
+   "fieldtype": "Check",
+   "label": "Flag Items with Zero Rate"
+  },
+  {
+   "default": "1",
+   "fieldname": "require_manual_review_on_missing_fields",
+   "fieldtype": "Check",
+   "label": "Flag Items with Missing Fields",
+   "description": "Items missing qty, uom, or description are flagged Needs Review."
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-04-11 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "prastara_ai",
+ "name": "Estimation Profile",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "role": "Sales Manager",
+   "share": 0,
+   "write": 0
+  },
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 0,
+   "export": 0,
+   "print": 0,
+   "read": 1,
+   "role": "Sales User",
+   "share": 0,
+   "write": 0
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -16,8 +16,10 @@
   "amount",
   "type",
   "confidence",
+  "item_status",
   "source_reference",
-  "pricing_detail_json"
+  "pricing_detail_json",
+  "extra_metadata_json"
  ],
  "fields": [
   {
@@ -41,7 +43,8 @@
   {
    "fieldname": "room_zone",
    "fieldtype": "Data",
-   "label": "Room / Zone"
+   "label": "Room / Zone",
+   "description": "Optional. Populated for schemas that include zone grouping (trade_boq, roomwise_boq). Leave blank for schemas that do not use zones."
   },
   {
    "fieldname": "description",
@@ -71,19 +74,31 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Always computed as qty × rate in Python. The model total is never used directly."
   },
   {
    "fieldname": "type",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Type",
-   "options": "Material\nService"
+   "options": "\nMaterial\nService",
+   "description": "Optional. Required only when the profile has Require Material/Service Split enabled."
   },
   {
    "fieldname": "confidence",
    "fieldtype": "Float",
-   "label": "AI Confidence"
+   "label": "AI Confidence",
+   "description": "Confidence score returned by the AI (0.0–1.0). Items below the profile threshold are flagged."
+  },
+  {
+   "default": "Valid",
+   "fieldname": "item_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Valid\nNeeds Review\nMissing Rate\nMissing Quantity\nSchema Error",
+   "description": "Set automatically based on profile validation rules. Valid = passed all checks. Needs Review = low confidence or missing optional fields. Missing Rate / Missing Quantity = required commercial data absent. Schema Error = a mandatory profile rule was violated."
   },
   {
    "fieldname": "source_reference",
@@ -95,6 +110,14 @@
    "fieldtype": "Long Text",
    "label": "Pricing Detail JSON",
    "read_only": 1
+  },
+  {
+   "fieldname": "extra_metadata_json",
+   "fieldtype": "Long Text",
+   "label": "Extra Metadata",
+   "read_only": 1,
+   "hidden": 1,
+   "description": "Stores schema-specific fields that do not fit the standard columns (e.g. drawing_reference, finish, trade for shop drawing or trade BOQ schemas)."
   }
  ],
  "index_web_pages_for_search": 1,

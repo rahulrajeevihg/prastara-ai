@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "opportunity",
+  "estimation_profile",
   "customer",
   "currency",
   "status",
@@ -33,6 +34,13 @@
    "in_list_view": 1,
    "label": "Opportunity",
    "options": "Opportunity"
+  },
+  {
+   "fieldname": "estimation_profile",
+   "fieldtype": "Link",
+   "label": "Estimation Profile",
+   "options": "Estimation Profile",
+   "description": "Select a profile to control how the AI behaves for this estimation. Leave blank to use the default profile from AI Estimation Settings."
   },
   {
    "fieldname": "customer",
