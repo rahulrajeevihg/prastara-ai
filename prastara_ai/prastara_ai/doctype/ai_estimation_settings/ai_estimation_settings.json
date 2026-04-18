@@ -30,7 +30,12 @@
   "validation_section",
   "min_confidence_to_accept",
   "flag_zero_rate",
-  "require_manual_review_on_missing_fields"
+  "require_manual_review_on_missing_fields",
+  "output_behaviour_section",
+  "description_style",
+  "include_file_source_reference",
+  "enforce_file_scope_only",
+  "pricing_context"
  ],
  "fields": [
   {
@@ -189,6 +194,37 @@
    "fieldname": "require_manual_review_on_missing_fields",
    "fieldtype": "Check",
    "label": "Flag Items with Missing Fields"
+  },
+  {
+   "fieldname": "output_behaviour_section",
+   "fieldtype": "Section Break",
+   "label": "Output Behaviour"
+  },
+  {
+   "default": "standard",
+   "fieldname": "description_style",
+   "fieldtype": "Select",
+   "label": "Item Description Style",
+   "options": "brief\nstandard\ndetailed\nspecification_grade",
+   "description": "Global default. Profiles can override. brief = one short phrase. standard = key spec sentence. detailed = full spec + dimensions. specification_grade = commercial spec for QS sign-off."
+  },
+  {
+   "default": "1",
+   "fieldname": "include_file_source_reference",
+   "fieldtype": "Check",
+   "label": "Include File Source Reference"
+  },
+  {
+   "default": "0",
+   "fieldname": "enforce_file_scope_only",
+   "fieldtype": "Check",
+   "label": "Enforce File Scope Only"
+  },
+  {
+   "fieldname": "pricing_context",
+   "fieldtype": "Long Text",
+   "label": "Pricing Context / Rate Schedule",
+   "description": "Global rate schedule. Profiles can override with their own pricing context."
   }
  ],
  "index_web_pages_for_search": 1,

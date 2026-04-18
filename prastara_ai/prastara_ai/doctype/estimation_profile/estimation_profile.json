@@ -29,7 +29,12 @@
   "validation_section",
   "min_confidence_to_accept",
   "flag_zero_rate",
-  "require_manual_review_on_missing_fields"
+  "require_manual_review_on_missing_fields",
+  "output_behaviour_section",
+  "description_style",
+  "include_file_source_reference",
+  "enforce_file_scope_only",
+  "pricing_context"
  ],
  "fields": [
   {
@@ -188,6 +193,39 @@
    "fieldtype": "Check",
    "label": "Flag Items with Missing Fields",
    "description": "Items missing qty, uom, or description are flagged Needs Review."
+  },
+  {
+   "fieldname": "output_behaviour_section",
+   "fieldtype": "Section Break",
+   "label": "Output Behaviour"
+  },
+  {
+   "default": "standard",
+   "fieldname": "description_style",
+   "fieldtype": "Select",
+   "label": "Item Description Style",
+   "options": "brief\nstandard\ndetailed\nspecification_grade",
+   "description": "Controls how verbose the AI's item descriptions are. brief = one short phrase. standard = sentence with key spec. detailed = full spec + dimensions. specification_grade = full commercial spec suitable for QS sign-off."
+  },
+  {
+   "default": "1",
+   "fieldname": "include_file_source_reference",
+   "fieldtype": "Check",
+   "label": "Include File Source Reference",
+   "description": "When enabled, the AI is instructed to record the source file name and page number in each item's remarks / source_reference field."
+  },
+  {
+   "default": "0",
+   "fieldname": "enforce_file_scope_only",
+   "fieldtype": "Check",
+   "label": "Enforce File Scope Only",
+   "description": "When enabled, the AI must only include items that are explicitly visible or directly implied in the attached files. Disabling allows professional judgement (recommended for fit-out)."
+  },
+  {
+   "fieldname": "pricing_context",
+   "fieldtype": "Long Text",
+   "label": "Pricing Context / Rate Schedule",
+   "description": "Paste your company's rate schedule here. The AI will use these rates as primary anchors. Leave blank to rely on AI's built-in market knowledge."
   }
  ],
  "index_web_pages_for_search": 1,

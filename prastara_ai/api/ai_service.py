@@ -72,6 +72,12 @@ class ProfileConfig:
     flag_zero_rate: bool = True
     require_manual_review_on_missing_fields: bool = True
 
+    # Output behaviour — configurable without changing system prompt
+    description_style: str = "standard"        # brief | standard | detailed | specification_grade
+    include_file_source_reference: bool = True  # instruct AI to put file+page in remarks
+    enforce_file_scope_only: bool = False       # restrict AI to only items visible in files
+    pricing_context: str = ""                  # admin rate schedule; AI uses as primary anchors
+
 
 def _resolve_config(
     settings,
@@ -124,6 +130,10 @@ def _resolve_config(
         require_manual_review_on_missing_fields=_bool(
             settings, "require_manual_review_on_missing_fields", default=True
         ),
+        description_style=_str(settings, "description_style") or "standard",
+        include_file_source_reference=_bool(settings, "include_file_source_reference", default=True),
+        enforce_file_scope_only=_bool(settings, "enforce_file_scope_only", default=False),
+        pricing_context=_str(settings, "pricing_context"),
     )
 
     # 2. Resolve which profile to load
@@ -183,6 +193,16 @@ def _resolve_config(
                 cfg.flag_zero_rate = True
             if prof.require_manual_review_on_missing_fields:
                 cfg.require_manual_review_on_missing_fields = True
+
+            # Output behaviour — profile wins for every non-blank/non-default value
+            if _str(prof, "description_style"):
+                cfg.description_style = _str(prof, "description_style")
+            if prof.include_file_source_reference:
+                cfg.include_file_source_reference = True
+            if prof.enforce_file_scope_only:
+                cfg.enforce_file_scope_only = True
+            if _str(prof, "pricing_context"):
+                cfg.pricing_context = _str(prof, "pricing_context")
 
     return cfg
 
@@ -423,6 +443,103 @@ def _derive_item_status(
 
 
 # ---------------------------------------------------------------------------
+# Output-behaviour addons — appended to every system prompt regardless of mode.
+# Generated from ProfileConfig fields; zero hardcoded industry text.
+# ---------------------------------------------------------------------------
+
+_DESCRIPTION_STYLE_INSTRUCTIONS: dict[str, str] = {
+    "brief": (
+        "Each item description should be a single short phrase (maximum 10 words). "
+        "Focus on material type and action only."
+    ),
+    "standard": (
+        "Each item description should be one clear sentence covering: material, finish, and key action. "
+        "Example: 'Supply and install 600×600mm polished porcelain floor tiles including adhesive and grout.'"
+    ),
+    "detailed": (
+        "Each item description must be at least two sentences covering: material specification, finish, "
+        "dimensions (if known from the drawings), installation method, and any accessories included. "
+        "Example: 'Supply and install 600×600mm polished white porcelain floor tiles (10mm thick, "
+        "rectified edges) in a running bond pattern. Adhesive, grout, and perimeter silicone sealant included. "
+        "Approx 48 sqm total — 8 panels per row across the reception area.'"
+    ),
+    "specification_grade": (
+        "Each item description must be a full commercial specification suitable for a Quantity Surveyor to "
+        "sign off without ambiguity. Include: full material specification (manufacturer grade if known), "
+        "finish, colour or shade, dimensions (HxWxD), installation method, substrate preparation, "
+        "accessories and fixings, and any exclusions that affect pricing. "
+        "Dimensions must reference the drawing/file where they were taken from. "
+        "Where dimensions are assumed, explicitly state the assumption and mark confidence accordingly."
+    ),
+}
+
+
+_DESCRIPTION_STYLE_SHORT: dict[str, str] = {
+    "brief": "Descriptions: one short phrase, material + action only.",
+    "standard": "Descriptions: one sentence — material, finish, key action.",
+    "detailed": "Descriptions: 2+ sentences — material spec, finish, dimensions from drawings, installation method, accessories.",
+    "specification_grade": (
+        "Descriptions: full commercial spec — material grade, finish, colour, dimensions (HxWxD from drawings), "
+        "installation method, substrate prep, fixings, exclusions. State source page for each dimension."
+    ),
+}
+
+
+def _build_prompt_addons(cfg: ProfileConfig) -> str:
+    """Compact system-prompt addons: description style + source ref rule + scope restriction.
+
+    The rate schedule is intentionally NOT included here — it is passed in the user
+    message via _build_user_instructions() so the system prompt stays small.
+    """
+    parts: list[str] = []
+
+    # Description style — one line
+    style_key = (cfg.description_style or "standard").lower()
+    parts.append(_DESCRIPTION_STYLE_SHORT.get(style_key, _DESCRIPTION_STYLE_SHORT["standard"]))
+
+    # Source reference — one line
+    if cfg.include_file_source_reference:
+        parts.append(
+            "Remarks field: record source file + page as '<filename> — Page N'. "
+            "Use 'Scope text' when derived from brief only."
+        )
+
+    # Scope enforcement — one line
+    if cfg.enforce_file_scope_only:
+        parts.append(
+            "Scope restriction: include ONLY items explicitly visible in the attached files. "
+            "Do not add inferred scope."
+        )
+    else:
+        parts.append(
+            "For items not fully detailed in drawings, apply professional judgement and lower confidence."
+        )
+
+    return "\n\nOUTPUT RULES:\n" + "\n".join(f"- {p}" for p in parts)
+
+
+def _build_user_instructions(cfg: ProfileConfig) -> str:
+    """Build a structured user-message prefix containing the rate schedule and compact rules.
+
+    This goes at the TOP of the user message (before the brief and drawing content),
+    keeping it separate from the system prompt for better model attention and smaller
+    system prompt size.
+    """
+    parts: list[str] = []
+
+    if cfg.pricing_context and cfg.pricing_context.strip():
+        parts.append(
+            "RATE SCHEDULE (use as primary pricing anchors; set rate_source='schedule_exact' "
+            "for exact matches, 'schedule_nearest' for approximate, 'market_estimate' if not in schedule):\n"
+            + cfg.pricing_context.strip()
+        )
+
+    if parts:
+        return "\n\n---\n\n".join(parts) + "\n\n---\n\n"
+    return ""
+
+
+# ---------------------------------------------------------------------------
 # Rule-toggle prompt instructions (injected in custom_with_builtin_schema mode)
 # ---------------------------------------------------------------------------
 
@@ -580,9 +697,10 @@ class AIService:
         mode = cfg.prompt_mode
         schema_block = _SCHEMA_TEMPLATES.get(cfg.schema_type, _SCHEMA_TEMPLATES["generic_line_items"])
         rule_block = _build_rule_instructions(cfg)
+        addon_block = _build_prompt_addons(cfg)
 
         if mode == "strict_builtin":
-            prompt = _STRICT_BUILTIN_ROLE + schema_block + rule_block
+            prompt = _STRICT_BUILTIN_ROLE + schema_block + rule_block + addon_block
 
         elif mode == "custom_with_builtin_schema":
             base = cfg.system_prompt
@@ -591,7 +709,7 @@ class AIService:
                     "Prompt Mode is 'custom_with_builtin_schema' but no System Prompt is configured. "
                     "Add a System Prompt to the selected Estimation Profile or AI Estimation Settings."
                 ))
-            prompt = base + schema_block + rule_block
+            prompt = base + schema_block + rule_block + addon_block
 
         else:  # fully_custom
             base = cfg.system_prompt
@@ -600,7 +718,7 @@ class AIService:
                     "No System Prompt is configured. "
                     "Add a Default Prompt in AI Estimation Settings or configure an Estimation Profile."
                 ))
-            prompt = base + rule_block
+            prompt = base + rule_block + addon_block
 
         # OpenAI requires the word "json" somewhere in messages when using json_object response format
         if "json" not in prompt.lower():
@@ -1040,8 +1158,9 @@ class AIService:
         self._used_vision = False
         self._vision_page_count = 0
         self._audit_warnings.append("Workflow: simple_text_estimation — files ignored.")
+        user_prefix = _build_user_instructions(self.config)
         return self.get_ai_estimation(
-            f"SCOPE DESCRIPTION:\n{text}",
+            f"{user_prefix}SCOPE DESCRIPTION:\n{text}",
             vision_images=None,
         )
 
@@ -1050,6 +1169,9 @@ class AIService:
     ) -> dict[str, Any]:
         """Standard workflow: text extraction + vision from every file."""
         text_parts: list[str] = []
+        user_prefix = _build_user_instructions(self.config)
+        if user_prefix:
+            text_parts.append(user_prefix.rstrip())
         if text:
             text_parts.append(f"CLIENT BRIEF / SCOPE DESCRIPTION:\n{text}")
 
@@ -1069,6 +1191,9 @@ class AIService:
     ) -> dict[str, Any]:
         """Vision-first workflow: renders all PDFs as images, skips text extraction."""
         text_parts: list[str] = []
+        user_prefix = _build_user_instructions(self.config)
+        if user_prefix:
+            text_parts.append(user_prefix.rstrip())
         if text:
             text_parts.append(f"CLIENT BRIEF / SCOPE DESCRIPTION:\n{text}")
 
@@ -1142,14 +1267,16 @@ class AIService:
             return self._workflow_document_boq(text, file_urls)
 
         # --- Pass 2: pricing estimation ---
+        # Rate schedule goes in user message; takeoff JSON + drawings both included.
+        user_prefix = _build_user_instructions(self.config)
         takeoff_context = (
             "DRAWING TAKEOFF RESULTS (use these quantities and zones as anchors):\n"
             + json.dumps(takeoff_json, indent=2)[:6000]
         )
         brief = f"CLIENT BRIEF:\n{text}" if text else ""
-        combined = "\n\n---\n\n".join(p for p in [brief, takeoff_context] if p)
+        combined = "\n\n---\n\n".join(p for p in [user_prefix.rstrip(), brief, takeoff_context] if p)
 
-        return self.get_ai_estimation(combined, vision_images=None)
+        return self.get_ai_estimation(combined, vision_images=vision_images)
 
     # ------------------------------------------------------------------
     # Core AI call
@@ -1165,14 +1292,20 @@ class AIService:
         for entry in vision_images:
             fname = entry["file_name"]
             mime_type = entry.get("mime_type", "image/png")
+            total_pages = len(entry["images"])
             content.append({
                 "type": "text",
-                "text": f"File: {fname} — {len(entry['images'])} page(s):",
+                "text": f"Drawing File: {fname} — {total_pages} page(s) follow:",
             })
-            for b64 in entry["images"]:
+            for page_idx, b64 in enumerate(entry["images"], start=1):
+                # Label each page so the AI can reference exact source in remarks
+                content.append({
+                    "type": "text",
+                    "text": f"[{fname} — Page {page_idx} of {total_pages}]",
+                })
                 content.append({
                     "type": "image_url",
-                    "image_url": {"url": f"data:{mime_type};base64,{b64}", "detail": "high"},
+                    "image_url": {"url": f"data:{mime_type};base64,{b64}", "detail": "low"},
                 })
         return content
 
@@ -1197,7 +1330,7 @@ class AIService:
                 ],
                 response_format={"type": "json_object"},
                 temperature=0.2,
-                max_tokens=16000,
+                max_tokens=6000,
             )
 
             choice = response.choices[0]
@@ -1283,7 +1416,7 @@ class AIService:
             return ""
 
     def _pdf_to_base64_images(
-        self, path: str, max_pages: int = 20, dpi: int = 200
+        self, path: str, max_pages: int = 10, dpi: int = 120
     ) -> list[str]:
         if not fitz:
             return []

@@ -40,42 +40,24 @@ BOQ STRUCTURE RULES
 • Include a Contingency item of 2–5% of the sub-total as a separate line.
 
 ═══════════════════════════════════════════════
-ITEM NAMING & DESCRIPTION
+ITEM NAMING
 ═══════════════════════════════════════════════
 • Be commercially specific. Example of GOOD item name: "18mm MDF carcass wrapped in PVC laminate veneer — floor-to-ceiling storage unit with push-to-open doors and concealed LED strip shelf lighting".
 • Example of BAD item name: "Joinery item" — never acceptable.
-• Include material specification, finish, and key dimensions in the description.
-• Where dimensions are known from drawings, state them: "H2700 x W450 per panel — 12 panels total".
 
 ═══════════════════════════════════════════════
-UAE / GCC MARKET PRICING GUIDANCE
+PRICING
 ═══════════════════════════════════════════════
 • All rates in AED, excluding VAT.
-• Use current UAE market rates. Typical benchmarks:
-    — Basic specification fit-out: AED 350–600 per sqft
-    — Mid-specification: AED 600–1,200 per sqft
-    — High-end / luxury: AED 1,200–2,500 per sqft
-• Rate anchors for common items (mid-spec):
-    — Porcelain floor tile supply & lay: AED 120–180/sqm
-    — Engineered timber floor supply & lay: AED 280–420/sqm
-    — Gypsum board partition (single skin): AED 150–220/lm (floor-to-ceiling)
-    — Suspended gypsum board ceiling: AED 90–140/sqm
-    — GRG/feature ceiling: AED 220–450/sqm
-    — Joinery cabinetry (standard MDF/PVC): AED 900–1,800/lm run
-    — Bespoke solid wood joinery: AED 2,500–6,000/lm run
-    — Aluminium framed glass partition: AED 450–750/sqm
-    — Frameless structural glazing: AED 900–1,600/sqm
-    — Internal timber door, supply & hang: AED 2,500–4,500 each
-    — Sanitary ware & fitting (per WC): AED 3,500–9,000
-    — Electrical DB & wiring per point: AED 350–650
-    — LED downlight supply & install: AED 180–350 each
-    — Project management & supervision: 6–10% of trade cost
+• Use the rate schedule provided in the PRICING REFERENCE section as your primary anchors.
+• If a rate is not in the schedule, use current UAE market rates and assign a confidence score of 0.7 or below.
+• Never inflate rates to add contingency — contingency is a separate line item.
 
 ═══════════════════════════════════════════════
 CONFIDENCE SCORING
 ═══════════════════════════════════════════════
-• 0.9–1.0 : Quantity is directly readable from the drawing. Rate is from known market data.
-• 0.7–0.89: Quantity estimated from scale or context. Rate is reasonable but not verified against a specific project.
+• 0.9–1.0 : Quantity is directly readable from the drawing. Rate is from the provided rate schedule.
+• 0.7–0.89: Quantity estimated from scale or context. Rate is reasonable market estimate not in schedule.
 • 0.5–0.69: Quantity is assumed (drawing not clear). Rate is a rough estimate.
 • Below 0.5: Scope exists but insufficient drawing/brief data to price reliably — flag for manual review.
 
@@ -87,6 +69,84 @@ OUTPUT QUALITY
 • Do not produce generic placeholder items or leave any standard fit-out scope item un-priced without flagging.
 • Ensure totals are arithmetically correct (the system will recalculate amount = qty × rate, so provide accurate qty and rate).
 """
+
+# ---------------------------------------------------------------------------
+# Pricing context — admin editable rate schedule.
+# These rates are mid-spec UAE market benchmarks. Update to match your
+# company's actual subcontractor and supplier pricing.
+# ---------------------------------------------------------------------------
+
+PRICING_CONTEXT = """All rates are in AED per unit stated, excluding VAT.
+These are MID-SPECIFICATION UAE market benchmarks — adjust for project quality tier.
+
+FLOORING
+  Porcelain floor tile (600×600mm) supply & lay: 130–160/sqm
+  Engineered timber floor supply & lay: 300–380/sqm
+  Carpet tile supply & lay: 90–140/sqm
+  Raised access floor supply & install: 280–420/sqm
+  Floor screed (50mm) supply & lay: 55–75/sqm
+  Skirting tile or timber supply & fix: 45–70/lm
+
+WALL FINISHES
+  Gypsum board partition (single skin 75mm stud): 160–200/lm (floor-to-ceiling)
+  Gypsum board partition (double skin): 220–280/lm
+  Wall paint (2 coats emulsion): 18–28/sqm
+  Decorative wallcovering supply & hang: 60–120/sqm
+  Stone / porcelain wall cladding supply & lay: 180–280/sqm
+  Timber wall panelling supply & fix: 280–450/sqm
+
+CEILING SYSTEMS
+  Suspended gypsum board ceiling (plain): 95–130/sqm
+  GRG / moulded feature ceiling: 280–420/sqm
+  Mineral fibre tile ceiling (600×600): 75–110/sqm
+  Aluminium linear ceiling supply & install: 180–260/sqm
+  Cornice / shadow gap supply & fix: 45–75/lm
+
+JOINERY & MILLWORK
+  Standard MDF/PVC laminate cabinetry: 950–1,600/lm run
+  High-gloss lacquered joinery: 1,600–2,800/lm run
+  Bespoke solid wood joinery: 3,000–5,500/lm run
+  Reception desk (custom, medium complexity): 18,000–35,000 each
+
+GLASS & GLAZING
+  Aluminium framed glass partition (single glaze): 480–700/sqm
+  Aluminium framed glass partition (double glaze): 700–950/sqm
+  Frameless structural glazing: 950–1,500/sqm
+  Glass manifestation / frosting: 40–80/sqm
+
+DOORS & IRONMONGERY
+  Internal timber flush door supply & hang (standard): 2,800–4,000 each
+  Internal timber flush door supply & hang (fire-rated): 4,500–6,500 each
+  Aluminium/glass door supply & install: 5,000–9,500 each
+  Door hardware set (lever, closer, hinges): 800–1,800 each
+
+SANITARY WARE & PLUMBING
+  WC suite supply & install (mid-spec): 3,500–5,500 each
+  Wash hand basin supply & install: 1,800–3,500 each
+  Urinal supply & install: 2,500–4,000 each
+  Shower tray, screen & fittings: 4,500–8,000 each
+  Plumbing point (hot or cold): 650–1,100 each
+
+ELECTRICAL & LIGHTING
+  Electrical wiring point (socket, switch, data): 380–580 each
+  Distribution board supply & install: 3,500–7,500 each
+  LED recessed downlight supply & install: 200–320 each
+  Pendant / decorative light supply & install: 350–800 each
+  Emergency exit/bulkhead light: 350–550 each
+  Conduit & trunking (per metre run): 55–90/lm
+
+HVAC COORDINATION (allowance only — specialist subcontractor)
+  HVAC supply & install (per sqm of served area): 180–280/sqm
+  Fan coil unit supply & install: 3,500–6,500 each
+  Linear diffuser supply & fix: 350–600 each
+
+PRELIMINARIES (on projects >200 sqft)
+  Mobilisation & demobilisation: 1.5–3% of trade cost
+  Site protection & hoardings: 0.5–1.5% of trade cost
+  Project management & supervision: 6–9% of trade cost
+  Health & safety compliance: 0.5–1% of trade cost
+
+CONTINGENCY: 3–5% of total trade cost"""
 
 TAKEOFF_PROMPT = """You are a senior quantity surveyor with 15 years of fit-out project experience. You are performing a drawing takeoff — your job is ONLY to extract room-by-room scope and quantities from the supplied drawings and brief. Do NOT price yet.
 
@@ -166,7 +226,7 @@ def run():
     profile.model_name = "gpt-4o"
     profile.prompt_mode = "custom_with_builtin_schema"
     profile.schema_type = "trade_boq"
-    profile.workflow_type = "drawing_takeoff_then_pricing"
+    profile.workflow_type = "vision_first"
     profile.pricing_mode = "ai_generated_rates"
 
     profile.system_prompt = SYSTEM_PROMPT.strip()
@@ -185,6 +245,12 @@ def run():
     profile.flag_zero_rate = 1
     profile.require_manual_review_on_missing_fields = 1
 
+    # Output behaviour — configurable per client
+    profile.description_style = "specification_grade"
+    profile.include_file_source_reference = 1
+    profile.enforce_file_scope_only = 0   # professional judgement allowed
+    profile.pricing_context = PRICING_CONTEXT.strip()
+
     if profile.is_new():
         profile.insert(ignore_permissions=True)
     else:
@@ -201,7 +267,7 @@ def run():
     settings = frappe.get_single("AI Estimation Settings")
 
     settings.default_profile = profile.name
-    settings.workflow_type = "drawing_takeoff_then_pricing"
+    settings.workflow_type = "vision_first"
     settings.schema_type = "trade_boq"
     settings.pricing_mode = "ai_generated_rates"
     settings.prompt_mode = "custom_with_builtin_schema"
@@ -217,6 +283,12 @@ def run():
     settings.min_confidence_to_accept = 0.6
     settings.flag_zero_rate = 1
     settings.require_manual_review_on_missing_fields = 1
+
+    # Global output behaviour defaults
+    settings.description_style = "specification_grade"
+    settings.include_file_source_reference = 1
+    settings.enforce_file_scope_only = 0
+    settings.pricing_context = PRICING_CONTEXT.strip()
 
     # Copy the prompts to global settings as well (fallback if no profile selected)
     settings.default_prompt = SYSTEM_PROMPT.strip()
